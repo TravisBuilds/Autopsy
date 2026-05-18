@@ -15,6 +15,8 @@ const UNIT_ALIASES: Record<string, string> = {
   "x10^9/l": "×10⁹/L",
   "10*9/l": "×10⁹/L",
   "10e9/l": "×10⁹/L",
+  "10*12/l": "×10¹²/L",
+  "10e12/l": "×10¹²/L",
 };
 
 export function normalizeUnit(unit: string): string {
@@ -25,9 +27,12 @@ export function normalizeUnit(unit: string): string {
 export function flagFromRawLetter(letter?: string): BiomarkerFlag | null {
   if (!letter) return null;
   const c = letter.trim().toUpperCase().charAt(0);
-  if (c === "H" || c === "A") return "high";
+  if (c === "N") return "normal";
+  if (c === "H") return "high";
   if (c === "L") return "low";
   if (c === "*") return "critical";
+  // LifeLabs "A" = abnormal — resolve from reference range
+  if (c === "A") return null;
   return null;
 }
 

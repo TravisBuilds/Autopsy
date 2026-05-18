@@ -1,26 +1,32 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { FileText, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface UploadDropzoneProps {
-  onFile: (file: File) => void;
-  onSample: () => void;
+  onFiles: (files: File[]) => void;
   disabled?: boolean;
 }
 
-export function UploadDropzone({ onFile, onSample, disabled }: UploadDropzoneProps) {
+function pdfFilesFromList(files: FileList | null): File[] {
+  if (!files?.length) return [];
+  return Array.from(files).filter(
+    (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+  );
+}
+
+export function UploadDropzone({ onFiles, disabled }: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
   const handleFiles = useCallback(
-    (files: FileList | null) => {
-      const file = files?.[0];
-      if (file?.type === "application/pdf") onFile(file);
+    (fileList: FileList | null) => {
+      const pdfs = pdfFilesFromList(fileList);
+      if (pdfs.length > 0) onFiles(pdfs);
     },
-    [onFile]
+    [onFiles]
   );
 
   return (
@@ -46,10 +52,14 @@ export function UploadDropzone({ onFile, onSample, disabled }: UploadDropzonePro
       <input
         ref={inputRef}
         type="file"
-        accept="application/pdf"
+        accept="application/pdf,.pdf"
+        multiple
         className="hidden"
         disabled={disabled}
-        onChange={(e) => handleFiles(e.target.files)}
+        onChange={(e) => {
+          handleFiles(e.target.files);
+          e.target.value = "";
+        }}
       />
 
       <motion.div
@@ -59,31 +69,20 @@ export function UploadDropzone({ onFile, onSample, disabled }: UploadDropzonePro
         <Upload className="h-6 w-6 text-teal-400" />
       </motion.div>
 
-      <h3 className="mt-4 text-lg font-medium">Drop your lab report PDF</h3>
+      <h3 className="mt-4 text-lg font-medium">Drop lab report PDFs</h3>
       <p className="mt-2 max-w-md text-sm text-muted-foreground">
-        LifeLabs, Dynacare, and similar semi-structured blood panels. We extract biomarkers,
-        normalize units, and detect flags.
+        Select or drop multiple LifeLabs / Dynacare panels at once. Each file becomes one entry
+        in your panel history.
       </p>
 
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => inputRef.current?.click()}
-          className="rounded-lg bg-teal-500/20 px-4 py-2 text-sm font-medium text-teal-300 ring-1 ring-teal-500/30 transition hover:bg-teal-500/30"
-        >
-          Choose PDF
-        </button>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={onSample}
-          className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/[0.04] hover:text-foreground"
-        >
-          <FileText className="h-4 w-4" />
-          Load sample report
-        </button>
-      </div>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => inputRef.current?.click()}
+        className="mt-6 rounded-lg bg-teal-500/20 px-4 py-2 text-sm font-medium text-teal-300 ring-1 ring-teal-500/30 transition hover:bg-teal-500/30"
+      >
+        Choose PDFs
+      </button>
     </div>
   );
 }

@@ -1,37 +1,36 @@
 "use client";
 
 import { useMemo } from "react";
-import { mockBiomarkers, mockAlerts, mockTimeline } from "@/lib/mock-data";
 import { useHealthStore } from "@/stores/health-store";
+import {
+  selectAlerts,
+  selectBiomarkerList,
+  selectPriorityBiomarkerList,
+} from "@/stores/selectors";
 import type { BiomarkerReading, HealthAlert, TimelineEvent } from "@/types/health";
 
-export function useBiomarkers(includeDemo = true): BiomarkerReading[] {
-  const stored = useHealthStore((s) => s.getBiomarkerList());
-
-  return useMemo(() => {
-    if (stored.length === 0 && includeDemo) return mockBiomarkers;
-    return stored;
-  }, [stored, includeDemo]);
+export function useBiomarkers(): BiomarkerReading[] {
+  const biomarkers = useHealthStore((s) => s.biomarkers);
+  return useMemo(() => selectBiomarkerList(biomarkers), [biomarkers]);
 }
 
-export function useAlerts(includeDemo = true): HealthAlert[] {
-  const stored = useHealthStore((s) => s.getAlerts());
-  const hasUploaded = useHealthStore((s) => s.testSessions.length > 0);
-
-  return useMemo(() => {
-    if (!hasUploaded && includeDemo) return mockAlerts;
-    return stored;
-  }, [stored, hasUploaded, includeDemo]);
+export function usePriorityBiomarkers(limit = 3): BiomarkerReading[] {
+  const biomarkers = useHealthStore((s) => s.biomarkers);
+  return useMemo(() => selectPriorityBiomarkerList(biomarkers, limit), [biomarkers, limit]);
 }
 
-export function useTimeline(includeDemo = true): TimelineEvent[] {
-  const stored = useHealthStore((s) => s.timelineEvents);
+export function useAlerts(): HealthAlert[] {
+  const biomarkers = useHealthStore((s) => s.biomarkers);
   const hasUploaded = useHealthStore((s) => s.testSessions.length > 0);
-
   return useMemo(() => {
-    if (!hasUploaded && includeDemo) return mockTimeline;
-    return stored.length > 0 ? stored : includeDemo ? mockTimeline : [];
-  }, [stored, hasUploaded, includeDemo]);
+    if (!hasUploaded) return [];
+    return selectAlerts(biomarkers);
+  }, [biomarkers, hasUploaded]);
+}
+
+export function useTimeline(): TimelineEvent[] {
+  const timelineEvents = useHealthStore((s) => s.timelineEvents);
+  return useMemo(() => timelineEvents, [timelineEvents]);
 }
 
 export function useHasUploadedData(): boolean {
@@ -40,4 +39,8 @@ export function useHasUploadedData(): boolean {
 
 export function useTestSessions() {
   return useHealthStore((s) => s.testSessions);
+}
+
+export function useInterventions() {
+  return useHealthStore((s) => s.interventions);
 }

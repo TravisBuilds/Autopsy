@@ -1,9 +1,16 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { useMemo } from "react";
 import { Sparkline } from "@/components/charts/sparkline";
+import { TrendBadge } from "@/components/charts/trend-badge";
 import { HealthCard } from "@/components/cards/health-card";
 import { Badge } from "@/components/ui/badge";
+import { toChartSeries } from "@/lib/biomarkers/chart-data";
+import { getBiomarkerDescriptionOrFallback } from "@/lib/biomarkers/descriptions";
+import { flagShort } from "@/lib/biomarkers/reference-labels";
+import { getMarkerPanelCount } from "@/lib/biomarkers/session-history";
+import { classifyTrend } from "@/lib/biomarkers/trends";
+import { useHealthStore } from "@/stores/health-store";
 import { cn } from "@/lib/utils";
 import type { BiomarkerReading } from "@/types/health";
 
@@ -18,40 +25,63 @@ const categoryLabels: Record<string, string> = {
   vitamins: "Vitamins",
 };
 
-const flagStyles: Record<string, string> = {
-  high: "text-amber-400 bg-amber-400/10 border-amber-400/20",
-  low: "text-sky-400 bg-sky-400/10 border-sky-400/20",
-  normal: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
-  critical: "text-red-400 bg-red-400/10 border-red-400/20",
-};
-
 interface BiomarkerCardProps {
   biomarker: BiomarkerReading;
   delay?: number;
   expanded?: boolean;
+  showTrend?: boolean;
+  onClick?: () => void;
 }
 
-export function BiomarkerCard({ biomarker, delay = 0, expanded }: BiomarkerCardProps) {
-  const sparkData = biomarker.history?.map((h) => ({ value: h.value })) ?? [];
-  const TrendIcon =
-    biomarker.flag === "high"
-      ? ArrowUp
-      : biomarker.flag === "low"
-        ? ArrowDown
-        : Minus;
+export function BiomarkerCard({
+  biomarker,
+  delay = 0,
+  expanded,
+  showTrend,
+  onClick,
+}: BiomarkerCardProps) {
+  const sessions = useHealthStore((s) => s.testSessions);
+
+  const series = useMemo(
+    () => toChartSeries(biomarker, sessions),
+    [biomarker, sessions]
+  );
+  const panelCount = useMemo(
+    () => (sessions.length > 0 ? getMarkerPanelCount(biomarker.id, sessions) : series.length),
+    [biomarker.id, sessions, series.length]
+  );
+  const trend = showTrend ? classifyTrend(biomarker, sessions) : null;
+  const sparkData = series.map((p) => ({ value: p.value }));
+  const description = getBiomarkerDescriptionOrFallback(biomarker.markerName);
 
   return (
-    <HealthCard delay={delay} glow={biomarker.flag === "high" || biomarker.flag === "critical"}>
+    <HealthCard delay={delay} onClick={onClick}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
             {categoryLabels[biomarker.category] ?? biomarker.category}
           </p>
           <h3 className="mt-1 text-sm font-medium text-foreground/90">{biomarker.markerName}</h3>
+          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+            {description}
+          </p>
         </div>
-        <Badge variant="outline" className={cn("text-[10px] capitalize", flagStyles[biomarker.flag])}>
-          {biomarker.flag}
-        </Badge>
+        <div className="flex flex-col items-end gap-1.5">
+          {panelCount > 0 && (
+            <span className="text-[10px] text-teal-400/90">
+              {panelCount} panel{panelCount !== 1 ? "s" : ""}
+            </span>
+          )}
+          <Badge
+            variant="outline"
+            className="border-white/10 bg-white/[0.03] text-[10px] text-muted-foreground"
+          >
+            {flagShort(biomarker.flag)}
+          </Badge>
+          {trend && trend.classification !== "insufficient" && (
+            <TrendBadge classification={trend.classification} label={trend.label} />
+          )}
+        </div>
       </div>
 
       <div className="mt-4 flex items-end justify-between gap-4">
@@ -60,30 +90,29 @@ export function BiomarkerCard({ biomarker, delay = 0, expanded }: BiomarkerCardP
             {biomarker.value}
             <span className="ml-1.5 text-sm text-muted-foreground">{biomarker.unit}</span>
           </p>
-          {biomarker.changePercent !== undefined && (
-            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <TrendIcon className="h-3 w-3 text-amber-400" />
-              <span className={biomarker.changePercent > 0 ? "text-amber-400" : "text-emerald-400"}>
-                {biomarker.changePercent > 0 ? "+" : ""}
-                {biomarker.changePercent}%
-              </span>
-              <span>vs prior panel</span>
+          {series.length >= 2 && trend?.percentChange !== undefined && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              <span
+                className={
+                  trend.percentChange > 0 ? "text-muted-foreground" : "text-muted-foreground"
+                }
+              >
+                {trend.percentChange > 0 ? "+" : ""}
+                {trend.percentChange}%
+              </span>{" "}
+              first → latest panel
             </p>
           )}
         </div>
         {sparkData.length > 1 && (
           <div className="w-24 shrink-0 opacity-80">
-            <Sparkline
-              data={sparkData}
-              color={biomarker.flag === "high" ? "#fbbf24" : "var(--accent-glow)"}
-              height={40}
-            />
+            <Sparkline data={sparkData} color="var(--accent-glow)" height={40} />
           </div>
         )}
       </div>
 
       <p className="mt-2 font-mono text-[10px] text-muted-foreground/70">
-        Ref {biomarker.referenceLow}–{biomarker.referenceHigh} {biomarker.unit}
+        Lab ref. {biomarker.referenceLow}–{biomarker.referenceHigh} {biomarker.unit}
       </p>
 
       {expanded && biomarker.insight && (

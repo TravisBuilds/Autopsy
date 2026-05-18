@@ -1,14 +1,13 @@
-import { WearableCard } from "@/components/cards/wearable-card";
+import { Suspense } from "react";
 import { AppShell } from "@/components/layout/app-shell";
-import { mockWearable } from "@/lib/mock-data";
+import { WearablesDashboard } from "@/components/wearables/wearables-dashboard";
 
 export default function WearablesPage() {
   return (
     <AppShell title="Wearables" subtitle="WHOOP recovery & strain intelligence">
-      <WearableCard data={mockWearable} />
-      <p className="mt-6 text-xs text-muted-foreground">
-        WHOOP API integration planned for Phase 4.
-      </p>
+      <Suspense fallback={<p className="text-sm text-muted-foreground">Loading…</p>}>
+        <WearablesDashboard />
+      </Suspense>
     </AppShell>
   );
 }

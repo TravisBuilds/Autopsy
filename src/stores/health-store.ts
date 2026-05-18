@@ -2,9 +2,14 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { formatTimelineDate, normalizeSessionDate } from "@/lib/biomarkers/dates";
+import {
+  formatInterventionTimelineLabel,
+  type InterventionInput,
+} from "@/lib/interventions/format";
 import { slugifyMarker } from "@/lib/ingestion/marker-catalog";
-import type { BiomarkerReading, HealthAlert, TimelineEvent } from "@/types/health";
-import type { ParsedBiomarker, TestSession } from "@/types/ingestion";
+import type { BiomarkerReading, Intervention, TimelineEvent } from "@/types/health";
+import type { ParsedBiomarker, SessionReading, TestSession } from "@/types/ingestion";
 
 interface ConfirmSessionInput {
   biomarkers: ParsedBiomarker[];
@@ -17,87 +22,158 @@ interface HealthState {
   biomarkers: Record<string, BiomarkerReading>;
   testSessions: TestSession[];
   timelineEvents: TimelineEvent[];
+  interventions: Intervention[];
 
   confirmSession: (input: ConfirmSessionInput) => void;
+  addIntervention: (input: InterventionInput) => string;
+  updateIntervention: (id: string, input: InterventionInput) => void;
+  removeIntervention: (id: string) => void;
   clearAllData: () => void;
-  getBiomarkerList: () => BiomarkerReading[];
-  getAlerts: () => HealthAlert[];
+  rebuildFromSessions: () => void;
 }
 
-function formatHistoryDate(isoDate: string): string {
-  return isoDate.slice(0, 7);
+function toSessionReadings(parsed: ParsedBiomarker[]): SessionReading[] {
+  return parsed.map((row) => ({
+    markerId: slugifyMarker(row.markerName),
+    markerName: row.markerName,
+    category: row.category,
+    value: row.value,
+    unit: row.unit,
+    referenceLow: row.referenceLow,
+    referenceHigh: row.referenceHigh,
+    flag: row.flag,
+  }));
 }
 
-function mergeReading(
-  existing: BiomarkerReading | undefined,
-  parsed: ParsedBiomarker,
-  sessionDate: string
-): BiomarkerReading {
-  const id = slugifyMarker(parsed.markerName);
-  const history = [...(existing?.history ?? [])];
+function rebuildBiomarkersFromSessions(sessions: TestSession[]): Record<string, BiomarkerReading> {
+  const sorted = [...sessions].sort(
+    (a, b) =>
+      normalizeSessionDate(a.date).localeCompare(normalizeSessionDate(b.date)) ||
+      a.createdAt.localeCompare(b.createdAt)
+  );
 
-  if (existing && !history.some((h) => h.date === formatHistoryDate(existing.date))) {
-    history.push({ date: formatHistoryDate(existing.date), value: existing.value });
+  const result: Record<string, BiomarkerReading> = {};
+
+  for (const session of sorted) {
+    for (const row of session.readings ?? []) {
+      const dateKey = normalizeSessionDate(session.date);
+      const existing = result[row.markerId];
+      const history = [...(existing?.history ?? [])];
+
+      const existingIdx = history.findIndex((h) => h.date === dateKey);
+      if (existingIdx >= 0) {
+        history[existingIdx] = { date: dateKey, value: row.value };
+      } else {
+        history.push({ date: dateKey, value: row.value });
+      }
+      history.sort((a, b) => a.date.localeCompare(b.date));
+
+      const prior = history.length >= 2 ? history[history.length - 2] : undefined;
+      const changePercent =
+        prior && prior.value !== 0
+          ? Math.round(((row.value - prior.value) / prior.value) * 100)
+          : undefined;
+
+      result[row.markerId] = {
+        id: row.markerId,
+        markerName: row.markerName,
+        category: row.category,
+        value: row.value,
+        unit: row.unit,
+        referenceLow: row.referenceLow,
+        referenceHigh: row.referenceHigh,
+        flag: row.flag,
+        date: dateKey,
+        history,
+        changePercent,
+      };
+    }
   }
 
-  const monthKey = formatHistoryDate(sessionDate);
-  const withoutDup = history.filter((h) => h.date !== monthKey);
-  withoutDup.push({ date: monthKey, value: parsed.value });
-  withoutDup.sort((a, b) => a.date.localeCompare(b.date));
+  return result;
+}
 
-  const prior = withoutDup.length >= 2 ? withoutDup[withoutDup.length - 2] : undefined;
-  const changePercent =
-    prior && prior.value !== 0
-      ? Math.round(((parsed.value - prior.value) / prior.value) * 100)
-      : existing?.changePercent;
+function labTimelineEvents(sessions: TestSession[]): TimelineEvent[] {
+  const sorted = [...sessions].sort(
+    (a, b) =>
+      normalizeSessionDate(b.date).localeCompare(normalizeSessionDate(a.date)) ||
+      b.createdAt.localeCompare(a.createdAt)
+  );
 
+  const perDateCount = new Map<string, number>();
+
+  return sorted.map((session) => {
+    const dateKey = normalizeSessionDate(session.date);
+    const n = (perDateCount.get(dateKey) ?? 0) + 1;
+    perDateCount.set(dateKey, n);
+
+    const readings = session.readings ?? [];
+    const abnormal = readings.filter((b) => b.flag !== "normal");
+    const markers =
+      abnormal.length > 0
+        ? abnormal.map((b) => `${b.flag === "high" ? "↑" : "↓"} ${b.markerName}`)
+        : readings.slice(0, 4).map((b) => b.markerName);
+
+    const sameDateTotal = sessions.filter((s) => normalizeSessionDate(s.date) === dateKey).length;
+    const dateLabel = formatTimelineDate(dateKey);
+    const suffix =
+      sameDateTotal > 1
+        ? ` · panel ${n}`
+        : session.sourceFileName
+          ? ` · ${session.sourceFileName.replace(/\.pdf$/i, "")}`
+          : "";
+
+    return {
+      id: `timeline-${session.id}`,
+      date: dateKey,
+      label: `Lab panel · ${session.labName ?? "Bloodwork"} · ${dateLabel}${suffix}`,
+      type: "biomarker" as const,
+      direction: abnormal.some((b) => b.flag === "high")
+        ? ("up" as const)
+        : abnormal.some((b) => b.flag === "low")
+          ? ("down" as const)
+          : ("neutral" as const),
+      markers,
+    };
+  });
+}
+
+function interventionTimelineEvents(interventions: Intervention[]): TimelineEvent[] {
+  return interventions.map((i) => ({
+    id: `intervention-${i.id}`,
+    date: normalizeSessionDate(i.startDate),
+    label: formatInterventionTimelineLabel(i),
+    type: "intervention" as const,
+    direction: "neutral" as const,
+    markers: [i.dosage, i.frequency].filter(Boolean) as string[],
+  }));
+}
+
+function rebuildTimeline(
+  sessions: TestSession[],
+  interventions: Intervention[]
+): TimelineEvent[] {
+  return [...labTimelineEvents(sessions), ...interventionTimelineEvents(interventions)].sort(
+    (a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
+  );
+}
+
+function syncDerived(state: {
+  testSessions: TestSession[];
+  interventions: Intervention[];
+}) {
   return {
-    id,
-    markerName: parsed.markerName,
-    category: parsed.category,
-    value: parsed.value,
-    unit: parsed.unit,
-    referenceLow: parsed.referenceLow,
-    referenceHigh: parsed.referenceHigh,
-    flag: parsed.flag,
-    date: sessionDate,
-    history: withoutDup,
-    changePercent,
+    biomarkers: rebuildBiomarkersFromSessions(state.testSessions),
+    timelineEvents: rebuildTimeline(state.testSessions, state.interventions),
   };
 }
 
-function buildAlerts(biomarkers: BiomarkerReading[]): HealthAlert[] {
-  return biomarkers
-    .filter((b) => b.flag === "high" || b.flag === "low" || b.flag === "critical")
-    .map((b) => ({
-      id: `alert-${b.id}`,
-      title: `${b.markerName} ${b.flag}`,
-      description: `${b.value} ${b.unit} — reference ${b.referenceLow}–${b.referenceHigh}`,
-      severity: b.flag === "critical" ? "critical" : "warning",
-      category: b.category,
-      timestamp: b.date,
-    }));
-}
-
-function buildTimelineEvent(
-  session: TestSession,
-  biomarkers: ParsedBiomarker[]
-): TimelineEvent {
-  const abnormal = biomarkers.filter((b) => b.flag !== "normal");
-  const markers =
-    abnormal.length > 0
-      ? abnormal.map((b) => `${b.flag === "high" ? "↑" : "↓"} ${b.markerName}`)
-      : biomarkers.slice(0, 4).map((b) => b.markerName);
-
-  return {
-    id: `timeline-${session.id}`,
-    date: formatHistoryDate(session.date),
-    label: `Lab panel · ${session.labName ?? "Bloodwork"}`,
-    type: "biomarker",
-    direction: abnormal.some((b) => b.flag === "high") ? "up" : "neutral",
-    markers,
-  };
-}
+type PersistedHealth = {
+  biomarkers?: Record<string, BiomarkerReading>;
+  testSessions?: TestSession[];
+  timelineEvents?: TimelineEvent[];
+  interventions?: Intervention[];
+};
 
 export const useHealthStore = create<HealthState>()(
   persist(
@@ -105,58 +181,142 @@ export const useHealthStore = create<HealthState>()(
       biomarkers: {},
       testSessions: [],
       timelineEvents: [],
+      interventions: [],
 
       confirmSession: ({ biomarkers: parsed, sessionDate, labName, sourceFileName }) => {
         const sessionId = crypto.randomUUID();
+        const normalizedDate = normalizeSessionDate(sessionDate);
+
         const session: TestSession = {
           id: sessionId,
-          date: sessionDate,
+          date: normalizedDate,
           labName,
           sourceFileName,
           biomarkerCount: parsed.length,
           createdAt: new Date().toISOString(),
+          readings: toSessionReadings(parsed),
         };
 
         set((state) => {
-          const nextBiomarkers = { ...state.biomarkers };
-          for (const row of parsed) {
-            const id = slugifyMarker(row.markerName);
-            nextBiomarkers[id] = mergeReading(state.biomarkers[id], row, sessionDate);
-          }
-
-          const timelineEvents = [
-            buildTimelineEvent(session, parsed),
-            ...state.timelineEvents.filter((e) => e.id !== `timeline-${sessionId}`),
-          ];
-
-          return {
-            biomarkers: nextBiomarkers,
-            testSessions: [session, ...state.testSessions],
-            timelineEvents,
-          };
+          const testSessions = [session, ...state.testSessions];
+          return { testSessions, ...syncDerived({ testSessions, interventions: state.interventions }) };
         });
+      },
+
+      addIntervention: (input) => {
+        const id = crypto.randomUUID();
+        const now = new Date().toISOString();
+        const intervention: Intervention = {
+          ...input,
+          id,
+          startDate: normalizeSessionDate(input.startDate),
+          endDate: input.endDate ? normalizeSessionDate(input.endDate) : undefined,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        set((state) => {
+          const interventions = [...state.interventions, intervention].sort((a, b) =>
+            normalizeSessionDate(b.startDate).localeCompare(normalizeSessionDate(a.startDate))
+          );
+          return { interventions, ...syncDerived({ testSessions: state.testSessions, interventions }) };
+        });
+
+        return id;
+      },
+
+      updateIntervention: (id, input) => {
+        set((state) => {
+          const interventions = state.interventions
+            .map((i) =>
+              i.id === id
+                ? {
+                    ...i,
+                    ...input,
+                    startDate: normalizeSessionDate(input.startDate),
+                    endDate: input.endDate ? normalizeSessionDate(input.endDate) : undefined,
+                    updatedAt: new Date().toISOString(),
+                  }
+                : i
+            )
+            .sort((a, b) =>
+              normalizeSessionDate(b.startDate).localeCompare(normalizeSessionDate(a.startDate))
+            );
+          return { interventions, ...syncDerived({ testSessions: state.testSessions, interventions }) };
+        });
+      },
+
+      removeIntervention: (id) => {
+        set((state) => {
+          const interventions = state.interventions.filter((i) => i.id !== id);
+          return { interventions, ...syncDerived({ testSessions: state.testSessions, interventions }) };
+        });
+      },
+
+      rebuildFromSessions: () => {
+        const { testSessions, interventions } = get();
+        set(syncDerived({ testSessions, interventions }));
       },
 
       clearAllData: () =>
-        set({ biomarkers: {}, testSessions: [], timelineEvents: [] }),
-
-      getBiomarkerList: () => {
-        const list = Object.values(get().biomarkers);
-        return list.sort((a, b) => {
-          const order = { high: 0, critical: 0, low: 1, normal: 2 };
-          return (order[a.flag] ?? 3) - (order[b.flag] ?? 3);
-        });
-      },
-
-      getAlerts: () => buildAlerts(get().getBiomarkerList()),
+        set({ biomarkers: {}, testSessions: [], timelineEvents: [], interventions: [] }),
     }),
     {
       name: "autopsy-health",
+      version: 3,
       partialize: (s) => ({
         biomarkers: s.biomarkers,
         testSessions: s.testSessions,
         timelineEvents: s.timelineEvents,
+        interventions: s.interventions,
       }),
+      migrate: (persistedState, version) => {
+        const persisted = persistedState as PersistedHealth;
+        const sessions = (persisted.testSessions ?? []).map((s) => ({
+          ...s,
+          readings: s.readings ?? [],
+          date: normalizeSessionDate(s.date),
+        }));
+        const interventions = (persisted.interventions ?? []).map((i) => ({
+          ...i,
+          startDate: normalizeSessionDate(i.startDate),
+          endDate: i.endDate ? normalizeSessionDate(i.endDate) : undefined,
+          createdAt: i.createdAt ?? new Date().toISOString(),
+          updatedAt: i.updatedAt ?? new Date().toISOString(),
+        }));
+
+        if (version < 2) {
+          const withReadings = sessions.filter((s) => s.readings.length > 0);
+          if (withReadings.length > 0) {
+            return {
+              biomarkers: rebuildBiomarkersFromSessions(withReadings),
+              testSessions: sessions,
+              interventions,
+              timelineEvents: rebuildTimeline(withReadings, interventions),
+            };
+          }
+        }
+
+        if (version < 3) {
+          return {
+            biomarkers: persisted.biomarkers ?? rebuildBiomarkersFromSessions(sessions),
+            testSessions: sessions,
+            interventions,
+            timelineEvents: rebuildTimeline(sessions, interventions),
+          };
+        }
+
+        return {
+          biomarkers: persisted.biomarkers ?? {},
+          testSessions: sessions,
+          interventions,
+          timelineEvents: persisted.timelineEvents ?? rebuildTimeline(sessions, interventions),
+        };
+      },
     }
   )
 );
+
+export function hasLegacySessionsWithoutReadings(sessions: TestSession[]): boolean {
+  return sessions.some((s) => !s.readings?.length);
+}

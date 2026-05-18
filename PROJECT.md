@@ -26,6 +26,27 @@ Personal longitudinal health intelligence platform.
 - [x] Dashboards wired to uploaded data (biomarkers, alerts, timeline)
 - [x] Sample report loader for testing without a PDF
 
+### Phase 3 — complete
+
+- [x] Longitudinal `BiomarkerChart` with reference range band + tooltips
+- [x] Trend classification (improving / worsening / stable / volatile)
+- [x] Biomarker dashboard with category filters + summary stats
+- [x] Detail side panel with full chart + history table
+- [x] Trend badges on biomarker cards (home + biomarkers pages)
+- [x] Batch multi-PDF upload, session-based panel archive, priority Command Center
+- [x] Biomarker descriptions (cards + detail sheet)
+
+### Phase 4 — in progress
+
+- [x] Interactive timeline axis with clickable lab panels (`/timeline`)
+- [x] Panel drill-down: flagged markers, click → biomarker detail sheet
+- [x] Home timeline preview links to `/timeline?panel=…`
+- [x] Interventions CRUD (medications, supplements, dosage, start month)
+- [x] Intervention markers on timeline (violet dots)
+- [x] Auth sessions + WHOOP OAuth routes (`/login`, `/wearables`, `.env.example`)
+- [ ] WHOOP data sync + recovery on timeline
+- [ ] Multi-marker overlay chart on shared axis
+
 ## Run locally
 
 ```bash
@@ -41,8 +62,8 @@ Open [http://localhost:3000](http://localhost:3000).
 |-------|--------|
 | **1** ✅ | App shell, theme, sidebar, cards, home dashboard |
 | **2** ✅ | Upload pipeline, PDF parsing, biomarker normalization |
-| **3** | Biomarker charts, trend classification, range viz |
-| **4** | Interactive timeline, intervention overlays, WHOOP |
+| **3** ✅ | Biomarker charts, trend classification, range viz |
+| **4** 🚧 | Interactive timeline (done), intervention overlays, WHOOP |
 | **5** | AI parsing, insight cards, anomaly summaries |
 | **6** | Supabase schema, genome & imaging dashboards, correlations |
 

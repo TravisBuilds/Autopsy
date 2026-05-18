@@ -35,12 +35,12 @@ export const MARKER_CATALOG: MarkerDefinition[] = [
   {
     canonical: "Glucose",
     category: "metabolic",
-    aliases: [/^glucose/i, /^fasting glucose/i, /^blood sugar/i],
+    aliases: [/^glucose/i, /^glucose fasting/i, /^fasting glucose/i, /^blood sugar/i],
   },
   {
     canonical: "HbA1c",
     category: "metabolic",
-    aliases: [/^hba1c/i, /^a1c\b/i, /hemoglobin a1c/i],
+    aliases: [/^hemoglobin a1c/i, /^hba1c/i, /^a1c\b/i],
   },
   {
     canonical: "Urate",

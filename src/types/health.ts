@@ -42,7 +42,10 @@ export interface Intervention {
   frequency?: string;
   startDate: string;
   endDate?: string;
+  notes?: string;
   active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface WearableSnapshot {

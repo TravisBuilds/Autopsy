@@ -111,6 +111,8 @@ export const mockAlerts: HealthAlert[] = [
   },
 ];
 
+const mockInterventionTs = "2025-01-01T00:00:00.000Z";
+
 export const mockInterventions: Intervention[] = [
   {
     id: "i1",
@@ -120,6 +122,8 @@ export const mockInterventions: Intervention[] = [
     frequency: "Nightly",
     startDate: "2025-10-01",
     active: true,
+    createdAt: mockInterventionTs,
+    updatedAt: mockInterventionTs,
   },
   {
     id: "i2",
@@ -129,6 +133,8 @@ export const mockInterventions: Intervention[] = [
     frequency: "2× daily with meals",
     startDate: "2026-01-15",
     active: true,
+    createdAt: mockInterventionTs,
+    updatedAt: mockInterventionTs,
   },
   {
     id: "i3",
@@ -137,6 +143,8 @@ export const mockInterventions: Intervention[] = [
     frequency: "4× weekly",
     startDate: "2025-06-01",
     active: true,
+    createdAt: mockInterventionTs,
+    updatedAt: mockInterventionTs,
   },
 ];
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/layout/app-shell";
-import { BiomarkerGrid } from "@/components/dashboard/biomarker-grid";
+import { BiomarkerDashboard } from "@/components/dashboard/biomarker-dashboard";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,7 @@ export default function BiomarkersPage() {
     <AppShell title="Biomarkers" subtitle="Longitudinal bloodwork intelligence">
       <div className="mb-6 flex items-center justify-between gap-4">
         <p className="text-xs text-muted-foreground">
-          Upload lab PDFs to extract markers, normalize units, and track trends over time.
+          Explore trends, reference ranges, and panel history. Click any marker for the full chart.
         </p>
         <Link
           href="/upload"
@@ -18,7 +18,7 @@ export default function BiomarkersPage() {
           Upload report
         </Link>
       </div>
-      <BiomarkerGrid expanded />
+      <BiomarkerDashboard />
     </AppShell>
   );
 }

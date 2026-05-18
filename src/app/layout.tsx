@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SessionProvider } from "@/components/auth/session-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -30,7 +31,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full">
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <SessionProvider>{children}</SessionProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

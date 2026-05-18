@@ -1,27 +1,51 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AlertCard } from "@/components/cards/alert-card";
 import { BiomarkerCard } from "@/components/cards/biomarker-card";
-import { InsightCard } from "@/components/cards/insight-card";
-import { InterventionCard } from "@/components/cards/intervention-card";
-import { WearableCard } from "@/components/cards/wearable-card";
+import { BiomarkerDetailSheet } from "@/components/biomarkers/biomarker-detail-sheet";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { TimelinePreview } from "@/components/dashboard/timeline-preview";
 import { buttonVariants } from "@/components/ui/button";
-import { useAlerts, useBiomarkers, useHasUploadedData, useTimeline } from "@/hooks/use-health-data";
-import { mockInsights, mockInterventions, mockWearable } from "@/lib/mock-data";
+import {
+  useAlerts,
+  useHasUploadedData,
+  usePriorityBiomarkers,
+  useTestSessions,
+  useTimeline,
+} from "@/hooks/use-health-data";
 import { cn } from "@/lib/utils";
+import type { BiomarkerReading } from "@/types/health";
+
+function EmptyHint({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <p className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-center text-sm text-muted-foreground">
+      {children}{" "}
+      <Link href={href} className="text-teal-400 hover:underline">
+        Get started →
+      </Link>
+    </p>
+  );
+}
 
 export function HomeDashboard() {
-  const biomarkers = useBiomarkers();
+  const [selected, setSelected] = useState<BiomarkerReading | null>(null);
+  const priorityBiomarkers = usePriorityBiomarkers(3);
   const alerts = useAlerts();
   const timeline = useTimeline();
+  const sessions = useTestSessions();
   const hasUploaded = useHasUploadedData();
 
-  const featured = biomarkers[0];
-  const priority = biomarkers.slice(0, 3);
+  const sessionIdByEventId = useMemo(
+    () =>
+      Object.fromEntries(sessions.map((s) => [`timeline-${s.id}`, s.id] as const)),
+    [sessions]
+  );
+
+  const featured = priorityBiomarkers[0];
+  const priorityRest = priorityBiomarkers.slice(1);
 
   return (
     <>
@@ -32,9 +56,14 @@ export function HomeDashboard() {
         <h2 className="mt-2 text-2xl font-light tracking-tight">
           Your health intelligence at a glance
         </h2>
-        {hasUploaded && (
-          <p className="mt-2 text-xs text-teal-400/90">
-            Live data from your uploaded panels
+        {hasUploaded ? (
+          <p className="mt-2 text-xs text-teal-400/90">From your uploaded lab panels</p>
+        ) : (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Upload lab PDFs to build your archive —{" "}
+            <Link href="/upload" className="text-teal-400 hover:underline">
+              multiple files at once
+            </Link>
           </p>
         )}
       </div>
@@ -44,77 +73,66 @@ export function HomeDashboard() {
           <section>
             <SectionHeader
               title="Priority biomarkers"
-              description={hasUploaded ? "From your latest upload" : "Demo panel · Mar 11, 2026"}
+              description={
+                hasUploaded
+                  ? "Out of range on your latest panel — lipids & metabolic first"
+                  : "No data yet"
+              }
               action={
-                <Link
-                  href="/biomarkers"
-                  className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-xs")}
-                >
-                  View all <ArrowRight className="ml-1 h-3 w-3" />
-                </Link>
+                hasUploaded ? (
+                  <Link
+                    href="/biomarkers"
+                    className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-xs")}
+                  >
+                    View all <ArrowRight className="ml-1 h-3 w-3" />
+                  </Link>
+                ) : undefined
               }
             />
             {featured ? (
               <div className="grid gap-4 sm:grid-cols-2">
-                <BiomarkerCard biomarker={featured} delay={0} expanded />
-                {priority.slice(1).map((b, i) => (
-                  <BiomarkerCard key={b.id} biomarker={b} delay={(i + 1) * 0.05} />
+                <BiomarkerCard
+                  biomarker={featured}
+                  delay={0}
+                  expanded
+                  showTrend
+                  onClick={() => setSelected(featured)}
+                />
+                {priorityRest.map((b, i) => (
+                  <BiomarkerCard
+                    key={b.id}
+                    biomarker={b}
+                    delay={(i + 1) * 0.05}
+                    showTrend
+                    onClick={() => setSelected(b)}
+                  />
                 ))}
               </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                <Link href="/upload" className="text-teal-400 hover:underline">
-                  Upload your first lab report
-                </Link>
+            ) : hasUploaded ? (
+              <p className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-center text-sm text-muted-foreground">
+                All markers on your latest panel are within lab reference ranges.
               </p>
+            ) : (
+              <EmptyHint href="/upload">Upload your first lab panel to see biomarkers here.</EmptyHint>
             )}
-          </section>
-
-          <section>
-            <SectionHeader
-              title="AI insights"
-              description="Interpretive summaries — not diagnosis"
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
-              {mockInsights.map((insight, i) => (
-                <InsightCard key={insight.id} insight={insight} delay={i * 0.05} />
-              ))}
-            </div>
           </section>
         </div>
 
         <div className="space-y-6 lg:col-span-4">
           <section>
-            <SectionHeader title="Active alerts" />
-            <div className="space-y-3">
-              {alerts.slice(0, 3).map((alert, i) => (
-                <AlertCard key={alert.id} alert={alert} delay={i * 0.05} />
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <SectionHeader title="WHOOP" />
-            <WearableCard data={mockWearable} />
-          </section>
-
-          <section>
             <SectionHeader
-              title="Active interventions"
-              action={
-                <Link
-                  href="/interventions"
-                  className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-xs")}
-                >
-                  Manage
-                </Link>
-              }
+              title="Reference notes"
+              description="Out of range on latest panel, by priority"
             />
-            <div className="space-y-3">
-              {mockInterventions.slice(0, 2).map((item, i) => (
-                <InterventionCard key={item.id} intervention={item} delay={i * 0.05} />
-              ))}
-            </div>
+            {alerts.length > 0 ? (
+              <div className="space-y-3">
+                {alerts.slice(0, 3).map((alert, i) => (
+                  <AlertCard key={alert.id} alert={alert} delay={i * 0.05} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">No panels uploaded yet.</p>
+            )}
           </section>
         </div>
       </div>
@@ -122,20 +140,32 @@ export function HomeDashboard() {
       <section className="mt-8">
         <SectionHeader
           title="Timeline preview"
-          description="Longitudinal view"
+          description="Lab panels over time"
           action={
-            <Link
-              href="/timeline"
-              className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-xs")}
-            >
-              Open timeline
-            </Link>
+            hasUploaded ? (
+              <Link
+                href="/timeline"
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-xs")}
+              >
+                Open timeline
+              </Link>
+            ) : undefined
           }
         />
-        <div className="rounded-2xl border border-white/[0.06] bg-card/40 p-6 backdrop-blur-xl">
-          <TimelinePreview events={timeline} />
-        </div>
+        {timeline.length > 0 ? (
+          <div className="rounded-2xl border border-white/[0.06] bg-card/40 p-6 backdrop-blur-xl">
+            <TimelinePreview events={timeline} sessionIdByEventId={sessionIdByEventId} />
+          </div>
+        ) : (
+          <EmptyHint href="/upload">Upload lab reports to build your timeline.</EmptyHint>
+        )}
       </section>
+
+      <BiomarkerDetailSheet
+        biomarker={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </>
   );
 }

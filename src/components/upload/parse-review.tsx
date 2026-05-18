@@ -49,7 +49,7 @@ export function ParseReview({
           )}
         </div>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] text-muted-foreground">Panel date</span>
+          <span className="text-[10px] text-muted-foreground">Panel date (collection / service date)</span>
           <input
             type="date"
             value={sessionDate}
@@ -58,6 +58,9 @@ export function ParseReview({
           />
         </label>
       </div>
+      <p className="text-[10px] text-muted-foreground">
+        Use the collection / service date from your report — not the PDF footer date. Each panel needs its own date for trends.
+      </p>
 
       {result.parseErrors.length > 0 && (
         <div className="flex gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200">

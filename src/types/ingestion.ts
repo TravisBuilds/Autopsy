@@ -24,6 +24,17 @@ export interface LabParseResult {
   parseErrors: string[];
 }
 
+export interface SessionReading {
+  markerId: string;
+  markerName: string;
+  category: BiomarkerCategory;
+  value: number;
+  unit: string;
+  referenceLow: number;
+  referenceHigh: number;
+  flag: BiomarkerFlag;
+}
+
 export interface TestSession {
   id: string;
   date: string;
@@ -31,6 +42,23 @@ export interface TestSession {
   sourceFileName?: string;
   biomarkerCount: number;
   createdAt: string;
+  readings: SessionReading[];
 }
 
-export type UploadStep = "idle" | "extracting" | "parsing" | "review" | "saving" | "complete";
+export interface PendingUpload {
+  id: string;
+  fileName: string;
+  result: LabParseResult;
+  sessionDate: string;
+  error?: string;
+}
+
+export type UploadStep =
+  | "idle"
+  | "processing"
+  | "batch-review"
+  | "extracting"
+  | "parsing"
+  | "review"
+  | "saving"
+  | "complete";
