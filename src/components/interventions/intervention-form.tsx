@@ -21,11 +21,12 @@ const TYPES: { value: Intervention["type"]; label: string }[] = [
 
 interface InterventionFormProps {
   initial?: Intervention | null;
-  onSubmit: (values: ReturnType<typeof formValuesToInterventionInput>) => void;
+  onSubmit: (values: ReturnType<typeof formValuesToInterventionInput>) => void | Promise<void>;
   onCancel: () => void;
+  saving?: boolean;
 }
 
-export function InterventionForm({ initial, onSubmit, onCancel }: InterventionFormProps) {
+export function InterventionForm({ initial, onSubmit, onCancel, saving = false }: InterventionFormProps) {
   const [values, setValues] = useState<InterventionFormValues>(
     initial ? interventionToFormValues(initial) : emptyInterventionForm()
   );
@@ -35,7 +36,7 @@ export function InterventionForm({ initial, onSubmit, onCancel }: InterventionFo
     setValues((prev) => ({ ...prev, [key]: val }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!values.name.trim()) {
       setError("Name is required (e.g. Allopurinol).");
@@ -46,7 +47,7 @@ export function InterventionForm({ initial, onSubmit, onCancel }: InterventionFo
       return;
     }
     setError(null);
-    onSubmit(formValuesToInterventionInput(values));
+    await onSubmit(formValuesToInterventionInput(values));
   };
 
   return (
@@ -145,15 +146,16 @@ export function InterventionForm({ initial, onSubmit, onCancel }: InterventionFo
       {error && <p className="text-xs text-red-400">{error}</p>}
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+        <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={saving}>
           Cancel
         </Button>
         <Button
           type="submit"
           size="sm"
           className="bg-teal-600 text-white hover:bg-teal-500"
+          disabled={saving}
         >
-          {initial ? "Save changes" : "Add intervention"}
+          {saving ? "Saving…" : initial ? "Save changes" : "Add intervention"}
         </Button>
       </div>
     </form>

@@ -48,6 +48,7 @@ export interface TestSession {
 export interface PendingUpload {
   id: string;
   fileName: string;
+  file?: File;
   result: LabParseResult;
   sessionDate: string;
   error?: string;

@@ -8,6 +8,7 @@ import { WhoopDataPanel } from "@/components/wearables/whoop-data-panel";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
+import { useHealthStore } from "@/stores/health-store";
 
 export function WearablesDashboard() {
   const searchParams = useSearchParams();
@@ -63,7 +64,15 @@ export function WearablesDashboard() {
 
   const handleSignOut = async () => {
     await fetch("/api/auth/signout", { method: "POST" });
+    if (typeof window !== "undefined") {
+      const { createClient } = await import("@/lib/supabase/client");
+      const { isSupabaseConfigured } = await import("@/lib/supabase/env");
+      if (isSupabaseConfigured()) {
+        await createClient().auth.signOut();
+      }
+    }
     signOut();
+    useHealthStore.getState().clearAllData();
     setMessage("Signed out.");
   };
 

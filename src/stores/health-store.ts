@@ -7,9 +7,16 @@ import {
   formatInterventionTimelineLabel,
   type InterventionInput,
 } from "@/lib/interventions/format";
-import { slugifyMarker } from "@/lib/ingestion/marker-catalog";
+import {
+  createInterventionApi,
+  deleteInterventionApi,
+  updateInterventionApi,
+} from "@/lib/health/api-client";
+import { toSessionReadings } from "@/lib/health/readings";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { useAuthStore } from "@/stores/auth-store";
 import type { BiomarkerReading, Intervention, TimelineEvent } from "@/types/health";
-import type { ParsedBiomarker, SessionReading, TestSession } from "@/types/ingestion";
+import type { ParsedBiomarker, TestSession } from "@/types/ingestion";
 
 interface ConfirmSessionInput {
   biomarkers: ParsedBiomarker[];
@@ -23,26 +30,25 @@ interface HealthState {
   testSessions: TestSession[];
   timelineEvents: TimelineEvent[];
   interventions: Intervention[];
+  cloudSynced: boolean;
 
   confirmSession: (input: ConfirmSessionInput) => void;
+  upsertTestSession: (session: TestSession) => void;
+  hydrateFromCloud: (payload: {
+    testSessions: TestSession[];
+    interventions: Intervention[];
+  }) => void;
   addIntervention: (input: InterventionInput) => string;
+  applyIntervention: (intervention: Intervention) => void;
   updateIntervention: (id: string, input: InterventionInput) => void;
+  replaceIntervention: (intervention: Intervention) => void;
   removeIntervention: (id: string) => void;
+  /** Saves to Supabase when signed in, then updates local state. */
+  persistAddIntervention: (input: InterventionInput) => Promise<string>;
+  persistUpdateIntervention: (id: string, input: InterventionInput) => Promise<void>;
+  persistRemoveIntervention: (id: string) => Promise<void>;
   clearAllData: () => void;
   rebuildFromSessions: () => void;
-}
-
-function toSessionReadings(parsed: ParsedBiomarker[]): SessionReading[] {
-  return parsed.map((row) => ({
-    markerId: slugifyMarker(row.markerName),
-    markerName: row.markerName,
-    category: row.category,
-    value: row.value,
-    unit: row.unit,
-    referenceLow: row.referenceLow,
-    referenceHigh: row.referenceHigh,
-    flag: row.flag,
-  }));
 }
 
 function rebuildBiomarkersFromSessions(sessions: TestSession[]): Record<string, BiomarkerReading> {
@@ -168,6 +174,10 @@ function syncDerived(state: {
   };
 }
 
+function shouldPersistInterventionsToCloud() {
+  return isSupabaseConfigured() && Boolean(useAuthStore.getState().user);
+}
+
 type PersistedHealth = {
   biomarkers?: Record<string, BiomarkerReading>;
   testSessions?: TestSession[];
@@ -182,6 +192,26 @@ export const useHealthStore = create<HealthState>()(
       testSessions: [],
       timelineEvents: [],
       interventions: [],
+      cloudSynced: false,
+
+      hydrateFromCloud: ({ testSessions, interventions }) => {
+        set({
+          testSessions,
+          interventions,
+          cloudSynced: true,
+          ...syncDerived({ testSessions, interventions }),
+        });
+      },
+
+      upsertTestSession: (session) => {
+        set((state) => {
+          const testSessions = [
+            session,
+            ...state.testSessions.filter((s) => s.id !== session.id),
+          ];
+          return { testSessions, cloudSynced: true, ...syncDerived({ testSessions, interventions: state.interventions }) };
+        });
+      },
 
       confirmSession: ({ biomarkers: parsed, sessionDate, labName, sourceFileName }) => {
         const sessionId = crypto.randomUUID();
@@ -225,6 +255,29 @@ export const useHealthStore = create<HealthState>()(
         return id;
       },
 
+      applyIntervention: (intervention) => {
+        set((state) => {
+          const interventions = [
+            intervention,
+            ...state.interventions.filter((i) => i.id !== intervention.id),
+          ].sort((a, b) =>
+            normalizeSessionDate(b.startDate).localeCompare(normalizeSessionDate(a.startDate))
+          );
+          return { interventions, ...syncDerived({ testSessions: state.testSessions, interventions }) };
+        });
+      },
+
+      replaceIntervention: (intervention) => {
+        set((state) => {
+          const interventions = state.interventions
+            .map((i) => (i.id === intervention.id ? intervention : i))
+            .sort((a, b) =>
+              normalizeSessionDate(b.startDate).localeCompare(normalizeSessionDate(a.startDate))
+            );
+          return { interventions, ...syncDerived({ testSessions: state.testSessions, interventions }) };
+        });
+      },
+
       updateIntervention: (id, input) => {
         set((state) => {
           const interventions = state.interventions
@@ -253,13 +306,44 @@ export const useHealthStore = create<HealthState>()(
         });
       },
 
+      persistAddIntervention: async (input) => {
+        if (shouldPersistInterventionsToCloud()) {
+          const created = await createInterventionApi(input);
+          get().applyIntervention(created);
+          return created.id;
+        }
+        return get().addIntervention(input);
+      },
+
+      persistUpdateIntervention: async (id, input) => {
+        if (shouldPersistInterventionsToCloud()) {
+          const updated = await updateInterventionApi(id, input);
+          get().replaceIntervention(updated);
+          return;
+        }
+        get().updateIntervention(id, input);
+      },
+
+      persistRemoveIntervention: async (id) => {
+        if (shouldPersistInterventionsToCloud()) {
+          await deleteInterventionApi(id);
+        }
+        get().removeIntervention(id);
+      },
+
       rebuildFromSessions: () => {
         const { testSessions, interventions } = get();
         set(syncDerived({ testSessions, interventions }));
       },
 
       clearAllData: () =>
-        set({ biomarkers: {}, testSessions: [], timelineEvents: [], interventions: [] }),
+        set({
+          biomarkers: {},
+          testSessions: [],
+          timelineEvents: [],
+          interventions: [],
+          cloudSynced: false,
+        }),
     }),
     {
       name: "autopsy-health",

@@ -1,29 +1,74 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { InterventionCard } from "@/components/cards/intervention-card";
 import { InterventionForm } from "@/components/interventions/intervention-form";
 import { Button } from "@/components/ui/button";
 import { formatInterventionSince, isInterventionActive } from "@/lib/interventions/format";
+import type { InterventionInput } from "@/lib/interventions/format";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { useAuthStore } from "@/stores/auth-store";
 import { useHealthStore } from "@/stores/health-store";
 import type { Intervention } from "@/types/health";
 
 export function InterventionsDashboard() {
+  const user = useAuthStore((s) => s.user);
   const interventions = useHealthStore((s) => s.interventions);
-  const addIntervention = useHealthStore((s) => s.addIntervention);
-  const updateIntervention = useHealthStore((s) => s.updateIntervention);
-  const removeIntervention = useHealthStore((s) => s.removeIntervention);
+  const persistAddIntervention = useHealthStore((s) => s.persistAddIntervention);
+  const persistUpdateIntervention = useHealthStore((s) => s.persistUpdateIntervention);
+  const persistRemoveIntervention = useHealthStore((s) => s.persistRemoveIntervention);
+  const cloudRequired = isSupabaseConfigured();
 
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Intervention | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const active = interventions.filter((i) => isInterventionActive(i));
   const past = interventions.filter((i) => !isInterventionActive(i));
+  const canAdd = !cloudRequired || Boolean(user);
 
   const closeForm = () => {
     setShowForm(false);
     setEditing(null);
+    setError(null);
+  };
+
+  const handleSubmit = async (input: InterventionInput) => {
+    if (cloudRequired && !user) {
+      setError("Sign in to save interventions to your account.");
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    try {
+      if (editing) {
+        await persistUpdateIntervention(editing.id, input);
+      } else {
+        await persistAddIntervention(input);
+      }
+      closeForm();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save intervention");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemove = async (id: string) => {
+    if (cloudRequired && !user) {
+      setError("Sign in to remove interventions from your account.");
+      return;
+    }
+    setError(null);
+    try {
+      await persistRemoveIntervention(id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to remove intervention");
+    }
   };
 
   return (
@@ -31,8 +76,11 @@ export function InterventionsDashboard() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
           Track medications and supplements with start dates — shown on your timeline.
+          {cloudRequired && user && (
+            <span className="text-teal-400/90"> Synced to your account.</span>
+          )}
         </p>
-        {!showForm && !editing && (
+        {!showForm && !editing && canAdd && (
           <Button
             size="sm"
             className="bg-teal-600 text-white hover:bg-teal-500"
@@ -44,18 +92,27 @@ export function InterventionsDashboard() {
         )}
       </div>
 
+      {cloudRequired && !user && (
+        <p className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-xs text-muted-foreground">
+          <Link href="/login" className="text-teal-400 hover:underline">
+            Sign in
+          </Link>{" "}
+          to save interventions to the database.
+        </p>
+      )}
+
+      {error && (
+        <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+          {error}
+        </p>
+      )}
+
       {(showForm || editing) && (
         <InterventionForm
           initial={editing}
           onCancel={closeForm}
-          onSubmit={(input) => {
-            if (editing) {
-              updateIntervention(editing.id, input);
-            } else {
-              addIntervention(input);
-            }
-            closeForm();
-          }}
+          onSubmit={handleSubmit}
+          saving={saving}
         />
       )}
 
@@ -65,14 +122,16 @@ export function InterventionsDashboard() {
           <p className="mt-2 text-xs text-muted-foreground">
             Example: Allopurinol · 100 mg · started April 2025
           </p>
-          <Button
-            size="sm"
-            className="mt-4 bg-teal-600 text-white hover:bg-teal-500"
-            onClick={() => setShowForm(true)}
-          >
-            <Plus className="mr-1.5 h-4 w-4" />
-            Add your first
-          </Button>
+          {canAdd && (
+            <Button
+              size="sm"
+              className="mt-4 bg-teal-600 text-white hover:bg-teal-500"
+              onClick={() => setShowForm(true)}
+            >
+              <Plus className="mr-1.5 h-4 w-4" />
+              Add your first
+            </Button>
+          )}
         </div>
       ) : (
         <>
@@ -93,7 +152,7 @@ export function InterventionsDashboard() {
                     }}
                     onDelete={() => {
                       if (confirm(`Remove ${item.name} from your log?`)) {
-                        removeIntervention(item.id);
+                        void handleRemove(item.id);
                       }
                     }}
                   />
@@ -119,7 +178,7 @@ export function InterventionsDashboard() {
                     }}
                     onDelete={() => {
                       if (confirm(`Remove ${item.name} from your log?`)) {
-                        removeIntervention(item.id);
+                        void handleRemove(item.id);
                       }
                     }}
                   />

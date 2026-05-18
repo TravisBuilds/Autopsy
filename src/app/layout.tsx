@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/auth/session-provider";
+import { HealthSyncProvider } from "@/components/health/health-sync-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/brand";
 import "./globals.css";
@@ -33,7 +34,9 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <TooltipProvider>
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+            <HealthSyncProvider>{children}</HealthSyncProvider>
+          </SessionProvider>
         </TooltipProvider>
       </body>
     </html>

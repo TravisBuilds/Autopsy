@@ -9,8 +9,11 @@ import { BatchProgress } from "@/components/upload/batch-progress";
 import { BatchUploadReview } from "@/components/upload/batch-upload-review";
 import { UploadDropzone } from "@/components/upload/upload-dropzone";
 import { Button } from "@/components/ui/button";
+import { createTestSession } from "@/lib/health/api-client";
 import { extractPdfText } from "@/lib/ingestion/extract-pdf-text";
 import { parseLabReportText } from "@/lib/ingestion/parse-lab-report";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { useAuthStore } from "@/stores/auth-store";
 import { useHealthStore } from "@/stores/health-store";
 import type { LabParseResult, PendingUpload, UploadStep } from "@/types/ingestion";
 
@@ -25,8 +28,11 @@ const emptyResult = (): LabParseResult => ({
 
 export function UploadWorkflow() {
   const router = useRouter();
+  const user = useAuthStore((s) => s.user);
   const confirmSession = useHealthStore((s) => s.confirmSession);
+  const upsertTestSession = useHealthStore((s) => s.upsertTestSession);
   const clearAllData = useHealthStore((s) => s.clearAllData);
+  const cloudEnabled = isSupabaseConfigured() && Boolean(user);
 
   const [step, setStep] = useState<UploadStep>("idle");
   const [pending, setPending] = useState<PendingUpload[]>([]);
@@ -68,6 +74,7 @@ export function UploadWorkflow() {
         results.push({
           id: crypto.randomUUID(),
           fileName: file.name,
+          file,
           result,
           sessionDate,
           error:
@@ -94,22 +101,51 @@ export function UploadWorkflow() {
     const importable = pending.filter((p) => !p.error && p.result.biomarkers.length > 0);
     if (importable.length === 0) return;
 
-    setStep("saving");
-    let count = 0;
-
-    for (const item of importable) {
-      confirmSession({
-        biomarkers: item.result.biomarkers,
-        sessionDate: item.sessionDate,
-        labName: item.result.labName ?? undefined,
-        sourceFileName: item.fileName,
-      });
-      count++;
+    if (isSupabaseConfigured() && !user) {
+      setError("Sign in to save uploads to your cloud account.");
+      return;
     }
 
-    setImportedCount(count);
-    setStep("complete");
-  }, [pending, confirmSession]);
+    setStep("saving");
+    setError(null);
+    let count = 0;
+
+    try {
+      for (let i = 0; i < importable.length; i++) {
+        const item = importable[i];
+        setBatchProgress({
+          current: i + 1,
+          total: importable.length,
+          fileName: item.fileName,
+        });
+
+        if (cloudEnabled) {
+          const session = await createTestSession({
+            biomarkers: item.result.biomarkers,
+            sessionDate: item.sessionDate,
+            labName: item.result.labName ?? undefined,
+            sourceFileName: item.fileName,
+            file: item.file,
+          });
+          upsertTestSession(session);
+        } else {
+          confirmSession({
+            biomarkers: item.result.biomarkers,
+            sessionDate: item.sessionDate,
+            labName: item.result.labName ?? undefined,
+            sourceFileName: item.fileName,
+          });
+        }
+        count++;
+      }
+
+      setImportedCount(count);
+      setStep("complete");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save panels");
+      setStep("batch-review");
+    }
+  }, [pending, cloudEnabled, user, confirmSession, upsertTestSession]);
 
   const reset = () => {
     setStep("idle");
@@ -199,17 +235,31 @@ export function UploadWorkflow() {
 
       {step === "idle" && (
         <div className="flex flex-col items-center gap-2 text-center text-xs text-muted-foreground">
-          <p>Data is stored locally in your browser.</p>
+          <p>
+            {cloudEnabled
+              ? "Panels and PDFs are saved to your cloud account."
+              : "Sign in to sync panels and PDFs to the cloud, or data stays in this browser only."}
+          </p>
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
               if (
-                confirm(
+                !confirm(
                   "Clear all uploaded panels and biomarker data? This cannot be undone."
                 )
               ) {
-                clearAllData();
+                return;
               }
+              if (cloudEnabled) {
+                try {
+                  const { clearHealthDataApi } = await import("@/lib/health/api-client");
+                  await clearHealthDataApi();
+                } catch {
+                  setError("Failed to clear cloud data.");
+                  return;
+                }
+              }
+              clearAllData();
             }}
             className="text-teal-400/80 hover:text-teal-400 hover:underline"
           >
