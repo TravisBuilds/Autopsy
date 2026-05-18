@@ -1,8 +1,8 @@
-# Autopsy
+# Pulse Check
 
 Personal longitudinal health intelligence platform.
 
-> A futuristic biological operating system for tracking biomarkers, imaging, genetics, interventions, wearable data, and longitudinal health intelligence over time.
+> Track biomarkers, interventions, and wearables over time — your pulse on longitudinal health.
 
 ## Build status
 

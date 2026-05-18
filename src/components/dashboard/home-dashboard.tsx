@@ -8,6 +8,7 @@ import { BiomarkerCard } from "@/components/cards/biomarker-card";
 import { BiomarkerDetailSheet } from "@/components/biomarkers/biomarker-detail-sheet";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { TimelinePreview } from "@/components/dashboard/timeline-preview";
+import { WhoopTodaySection } from "@/components/wearables/whoop-today-section";
 import { buttonVariants } from "@/components/ui/button";
 import {
   useAlerts,
@@ -16,6 +17,7 @@ import {
   useTestSessions,
   useTimeline,
 } from "@/hooks/use-health-data";
+import { APP_TAGLINE } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import type { BiomarkerReading } from "@/types/health";
 
@@ -51,7 +53,7 @@ export function HomeDashboard() {
     <>
       <div className="mb-8">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground">
-          Biological operating system
+          {APP_TAGLINE}
         </p>
         <h2 className="mt-2 text-2xl font-light tracking-tight">
           Your health intelligence at a glance
@@ -160,6 +162,10 @@ export function HomeDashboard() {
           <EmptyHint href="/upload">Upload lab reports to build your timeline.</EmptyHint>
         )}
       </section>
+
+      <div className="mt-8">
+        <WhoopTodaySection />
+      </div>
 
       <BiomarkerDetailSheet
         biomarker={selected}

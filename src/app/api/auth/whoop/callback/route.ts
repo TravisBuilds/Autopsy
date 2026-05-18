@@ -1,74 +1,67 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import {
+  WHOOP_ACCESS_COOKIE,
   WHOOP_EXPIRES_COOKIE,
   WHOOP_REFRESH_COOKIE,
   WHOOP_STATE_COOKIE,
-  WHOOP_TOKEN_URL,
-  WHOOP_ACCESS_COOKIE,
 } from "@/lib/auth/constants";
+import {
+  exchangeWhoopAuthorizationCode,
+  getWhoopRedirectUri,
+  resolveAppOrigin,
+} from "@/lib/auth/whoop-oauth";
 
-function appOrigin(request: Request): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
+function errorRedirect(origin: string, message: string) {
+  const url = new URL("/wearables", origin);
+  url.searchParams.set("whoop", "error");
+  url.searchParams.set("message", message.slice(0, 300));
+  return NextResponse.redirect(url);
 }
 
 export async function GET(request: Request) {
-  const origin = appOrigin(request);
+  const origin = resolveAppOrigin(request);
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state");
-  const error = searchParams.get("error");
+  const oauthError = searchParams.get("error");
+  const oauthDescription = searchParams.get("error_description");
 
-  if (error) {
-    return NextResponse.redirect(new URL(`/wearables?whoop=error&message=${error}`, origin));
+  if (oauthError) {
+    return errorRedirect(
+      origin,
+      oauthDescription ?? oauthError
+    );
   }
 
   if (!code || !state) {
-    return NextResponse.redirect(new URL("/wearables?whoop=error", origin));
-  }
-
-  const clientId = process.env.WHOOP_CLIENT_ID;
-  const clientSecret = process.env.WHOOP_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
-    return NextResponse.redirect(new URL("/wearables?whoop=setup", origin));
+    return errorRedirect(origin, "missing_code_or_state");
   }
 
   const jar = await cookies();
   const savedState = jar.get(WHOOP_STATE_COOKIE)?.value;
 
+  jar.delete(WHOOP_STATE_COOKIE);
+
   if (!savedState || savedState !== state) {
-    return NextResponse.redirect(new URL("/wearables?whoop=error&message=invalid_state", origin));
+    return errorRedirect(
+      origin,
+      "invalid_state — confirm NEXT_PUBLIC_APP_URL matches the URL in your browser and the WHOOP redirect URI"
+    );
   }
 
-  const redirectUri = `${origin}/api/auth/whoop/callback`;
+  const redirectUri = getWhoopRedirectUri(origin);
+  const result = await exchangeWhoopAuthorizationCode(code, redirectUri);
 
-  const tokenRes = await fetch(WHOOP_TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "authorization_code",
-      code,
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-    }),
-  });
-
-  if (!tokenRes.ok) {
-    return NextResponse.redirect(new URL("/wearables?whoop=error&message=token_exchange", origin));
+  if (!result.ok) {
+    return errorRedirect(origin, `token_exchange: ${result.error}`);
   }
-
-  const tokens = (await tokenRes.json()) as {
-    access_token: string;
-    refresh_token?: string;
-    expires_in?: number;
-  };
 
   const res = NextResponse.redirect(new URL("/wearables?whoop=connected", origin));
   const secure = process.env.NODE_ENV === "production";
-  const maxAge = tokens.expires_in ?? 3600;
+  const maxAge = result.expires_in ?? 3600;
 
-  res.cookies.set(WHOOP_ACCESS_COOKIE, tokens.access_token, {
+  res.cookies.set(WHOOP_ACCESS_COOKIE, result.access_token, {
     httpOnly: true,
     sameSite: "lax",
     secure,
@@ -76,8 +69,8 @@ export async function GET(request: Request) {
     maxAge,
   });
 
-  if (tokens.refresh_token) {
-    res.cookies.set(WHOOP_REFRESH_COOKIE, tokens.refresh_token, {
+  if (result.refresh_token) {
+    res.cookies.set(WHOOP_REFRESH_COOKIE, result.refresh_token, {
       httpOnly: true,
       sameSite: "lax",
       secure,
@@ -86,17 +79,16 @@ export async function GET(request: Request) {
     });
   }
 
-  if (tokens.expires_in) {
-    const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
+  if (result.expires_in) {
+    const expiresAt = new Date(Date.now() + result.expires_in * 1000).toISOString();
     res.cookies.set(WHOOP_EXPIRES_COOKIE, expiresAt, {
       httpOnly: true,
       sameSite: "lax",
       secure,
       path: "/",
-      maxAge: tokens.expires_in,
+      maxAge: result.expires_in,
     });
   }
 
-  res.cookies.delete(WHOOP_STATE_COOKIE);
   return res;
 }

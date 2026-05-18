@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/auth/session-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { APP_DESCRIPTION, APP_NAME } from "@/lib/brand";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Autopsy — Personal Health Intelligence",
-  description:
-    "A longitudinal biological operating system for biomarkers, wearables, imaging, and health intelligence.",
+  title: `${APP_NAME} — Personal Health Intelligence`,
+  description: APP_DESCRIPTION,
+  applicationName: APP_NAME,
 };
 
 export default function RootLayout({
