@@ -106,6 +106,17 @@ export async function deleteInterventionApi(id: string): Promise<void> {
   }
 }
 
+export async function deleteTestSessionApi(id: string): Promise<void> {
+  const res = await fetch(`/api/health/sessions/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: string };
+    throw new Error(body.error ?? "Failed to delete panel");
+  }
+}
+
 export async function clearHealthDataApi(): Promise<void> {
   const res = await fetch("/api/health/clear", {
     method: "DELETE",

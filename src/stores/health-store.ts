@@ -10,6 +10,7 @@ import {
 import {
   createInterventionApi,
   deleteInterventionApi,
+  deleteTestSessionApi,
   updateInterventionApi,
 } from "@/lib/health/api-client";
 import { toSessionReadings } from "@/lib/health/readings";
@@ -43,10 +44,12 @@ interface HealthState {
   updateIntervention: (id: string, input: InterventionInput) => void;
   replaceIntervention: (intervention: Intervention) => void;
   removeIntervention: (id: string) => void;
+  removeTestSession: (id: string) => void;
   /** Saves to Supabase when signed in, then updates local state. */
   persistAddIntervention: (input: InterventionInput) => Promise<string>;
   persistUpdateIntervention: (id: string, input: InterventionInput) => Promise<void>;
   persistRemoveIntervention: (id: string) => Promise<void>;
+  persistRemoveTestSession: (id: string) => Promise<void>;
   clearAllData: () => void;
   rebuildFromSessions: () => void;
 }
@@ -306,6 +309,13 @@ export const useHealthStore = create<HealthState>()(
         });
       },
 
+      removeTestSession: (id) => {
+        set((state) => {
+          const testSessions = state.testSessions.filter((s) => s.id !== id);
+          return { testSessions, ...syncDerived({ testSessions, interventions: state.interventions }) };
+        });
+      },
+
       persistAddIntervention: async (input) => {
         if (shouldPersistInterventionsToCloud()) {
           const created = await createInterventionApi(input);
@@ -331,6 +341,13 @@ export const useHealthStore = create<HealthState>()(
         get().removeIntervention(id);
       },
 
+      persistRemoveTestSession: async (id) => {
+        if (shouldPersistInterventionsToCloud()) {
+          await deleteTestSessionApi(id);
+        }
+        get().removeTestSession(id);
+      },
+
       rebuildFromSessions: () => {
         const { testSessions, interventions } = get();
         set(syncDerived({ testSessions, interventions }));
@@ -347,13 +364,16 @@ export const useHealthStore = create<HealthState>()(
     }),
     {
       name: "autopsy-health",
-      version: 3,
+      version: 4,
       partialize: (s) => ({
-        biomarkers: s.biomarkers,
         testSessions: s.testSessions,
-        timelineEvents: s.timelineEvents,
         interventions: s.interventions,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        const { testSessions, interventions } = state;
+        Object.assign(state, syncDerived({ testSessions, interventions }));
+      },
       migrate: (persistedState, version) => {
         const persisted = persistedState as PersistedHealth;
         const sessions = (persisted.testSessions ?? []).map((s) => ({
@@ -373,28 +393,25 @@ export const useHealthStore = create<HealthState>()(
           const withReadings = sessions.filter((s) => s.readings.length > 0);
           if (withReadings.length > 0) {
             return {
-              biomarkers: rebuildBiomarkersFromSessions(withReadings),
               testSessions: sessions,
               interventions,
-              timelineEvents: rebuildTimeline(withReadings, interventions),
+              ...syncDerived({ testSessions: sessions, interventions }),
             };
           }
         }
 
-        if (version < 3) {
+        if (version < 4) {
           return {
-            biomarkers: persisted.biomarkers ?? rebuildBiomarkersFromSessions(sessions),
             testSessions: sessions,
             interventions,
-            timelineEvents: rebuildTimeline(sessions, interventions),
+            ...syncDerived({ testSessions: sessions, interventions }),
           };
         }
 
         return {
-          biomarkers: persisted.biomarkers ?? {},
           testSessions: sessions,
           interventions,
-          timelineEvents: persisted.timelineEvents ?? rebuildTimeline(sessions, interventions),
+          ...syncDerived({ testSessions: sessions, interventions }),
         };
       },
     }

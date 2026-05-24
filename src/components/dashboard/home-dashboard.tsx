@@ -42,7 +42,7 @@ export function HomeDashboard() {
   const timeline = useTimeline();
   const sessions = useTestSessions();
   const hasUploaded = useHasUploadedData();
-  const { analysis } = useCommandCenterAnalysis();
+  const { analysis, loading } = useCommandCenterAnalysis();
 
   const sessionIdByEventId = useMemo(
     () =>
@@ -159,7 +159,7 @@ export function HomeDashboard() {
         <WhoopTodaySection />
       </div>
 
-      <CommandCenterInsights />
+      <CommandCenterInsights analysis={analysis} loading={loading} />
 
       <section className="mt-8">
         <SectionHeader

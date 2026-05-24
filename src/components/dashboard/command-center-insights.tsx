@@ -5,8 +5,12 @@ import { Dna, Dumbbell, FlaskConical, HeartPulse, Leaf, Sparkles, Utensils } fro
 import { InsightCard } from "@/components/cards/insight-card";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { Badge } from "@/components/ui/badge";
-import { useCommandCenterAnalysis } from "@/hooks/use-command-center";
-import type { GeneticBiomarkerFlag, RegimenCategory, RegimenRecommendation } from "@/types/command-center";
+import type {
+  CommandCenterAnalysis,
+  GeneticBiomarkerFlag,
+  RegimenCategory,
+  RegimenRecommendation,
+} from "@/types/command-center";
 
 const regimenIcons: Record<RegimenCategory, typeof Utensils> = {
   diet: Utensils,
@@ -73,8 +77,13 @@ function RegimenCard({ item }: { item: RegimenRecommendation }) {
   );
 }
 
-export function CommandCenterInsights() {
-  const { analysis, loading } = useCommandCenterAnalysis();
+export function CommandCenterInsights({
+  analysis,
+  loading,
+}: {
+  analysis: CommandCenterAnalysis | null;
+  loading: boolean;
+}) {
 
   if (loading && !analysis) {
     return (

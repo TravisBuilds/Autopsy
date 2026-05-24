@@ -79,3 +79,42 @@ export function formatPanelTitle(session: TestSession, index?: number): string {
   if (index !== undefined) return parts.join(" · ");
   return parts.join(" · ");
 }
+
+/** Stable key for spotting re-uploaded or migrated duplicate panels. */
+export function sessionFingerprint(session: TestSession): string {
+  const date = normalizeSessionDate(session.date);
+  const file = (session.sourceFileName ?? "").trim().toLowerCase();
+  const count = session.readings?.length ?? session.biomarkerCount ?? 0;
+  return `${date}|${file}|${count}`;
+}
+
+export function duplicateSessionIds(sessions: TestSession[]): Set<string> {
+  const groups = new Map<string, TestSession[]>();
+
+  for (const session of sessions) {
+    const key = sessionFingerprint(session);
+    const list = groups.get(key) ?? [];
+    list.push(session);
+    groups.set(key, list);
+  }
+
+  const duplicateIds = new Set<string>();
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    const sorted = [...group].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    for (const session of sorted.slice(1)) {
+      duplicateIds.add(session.id);
+    }
+  }
+
+  return duplicateIds;
+}
+
+export function dedupeSessionReadings(readings: SessionReading[]): SessionReading[] {
+  const byId = new Map<string, SessionReading>();
+  for (const reading of readings) {
+    byId.set(reading.markerId, reading);
+  }
+  return [...byId.values()].sort((a, b) => a.markerName.localeCompare(b.markerName));
+}
+

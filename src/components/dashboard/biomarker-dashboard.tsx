@@ -9,6 +9,7 @@ import { DataMigrationBanner } from "@/components/dashboard/data-migration-banne
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { useBiomarkers, useHasUploadedData, useTestSessions } from "@/hooks/use-health-data";
 import { getMarkerPanelCount } from "@/lib/biomarkers/session-history";
+import { useHealthStore } from "@/stores/health-store";
 import { cn } from "@/lib/utils";
 import type { BiomarkerCategory, BiomarkerReading } from "@/types/health";
 
@@ -28,6 +29,7 @@ export function BiomarkerDashboard() {
   const biomarkers = useBiomarkers();
   const sessions = useTestSessions();
   const hasUploaded = useHasUploadedData();
+  const persistRemoveTestSession = useHealthStore((s) => s.persistRemoveTestSession);
   const [category, setCategory] = useState<BiomarkerCategory | "all">("all");
   const [selected, setSelected] = useState<BiomarkerReading | null>(null);
 
@@ -68,8 +70,6 @@ export function BiomarkerDashboard() {
           — you can select multiple files at once.
         </p>
       )}
-
-      {hasUploaded && sessions.length > 0 && <PanelHistoryList sessions={sessions} />}
 
       <div className="mb-6 grid grid-cols-3 gap-3 sm:max-w-lg">
         <Stat label="Lab panels" value={stats.panelCount} />
@@ -115,6 +115,10 @@ export function BiomarkerDashboard() {
           ))}
         </div>
       </section>
+
+      {hasUploaded && sessions.length > 0 && (
+        <PanelHistoryList sessions={sessions} onRemove={persistRemoveTestSession} />
+      )}
 
       <BiomarkerDetailSheet
         biomarker={selected}
