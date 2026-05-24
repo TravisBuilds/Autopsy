@@ -6,10 +6,12 @@ import { ArrowRight } from "lucide-react";
 import { AlertCard } from "@/components/cards/alert-card";
 import { BiomarkerCard } from "@/components/cards/biomarker-card";
 import { BiomarkerDetailSheet } from "@/components/biomarkers/biomarker-detail-sheet";
+import { CommandCenterInsights } from "@/components/dashboard/command-center-insights";
 import { SectionHeader } from "@/components/dashboard/section-header";
 import { TimelinePreview } from "@/components/dashboard/timeline-preview";
 import { WhoopTodaySection } from "@/components/wearables/whoop-today-section";
 import { buttonVariants } from "@/components/ui/button";
+import { useCommandCenterAnalysis } from "@/hooks/use-command-center";
 import {
   useAlerts,
   useHasUploadedData,
@@ -17,6 +19,7 @@ import {
   useTestSessions,
   useTimeline,
 } from "@/hooks/use-health-data";
+import { geneticFlagForBiomarker } from "@/lib/command-center/analyze";
 import { APP_TAGLINE } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import type { BiomarkerReading } from "@/types/health";
@@ -39,6 +42,7 @@ export function HomeDashboard() {
   const timeline = useTimeline();
   const sessions = useTestSessions();
   const hasUploaded = useHasUploadedData();
+  const { analysis } = useCommandCenterAnalysis();
 
   const sessionIdByEventId = useMemo(
     () =>
@@ -98,6 +102,7 @@ export function HomeDashboard() {
                   delay={0}
                   expanded
                   showTrend
+                  geneticLink={geneticFlagForBiomarker(analysis, featured)}
                   onClick={() => setSelected(featured)}
                 />
                 {priorityRest.map((b, i) => (
@@ -106,6 +111,7 @@ export function HomeDashboard() {
                     biomarker={b}
                     delay={(i + 1) * 0.05}
                     showTrend
+                    geneticLink={geneticFlagForBiomarker(analysis, b)}
                     onClick={() => setSelected(b)}
                   />
                 ))}
@@ -128,9 +134,19 @@ export function HomeDashboard() {
             />
             {alerts.length > 0 ? (
               <div className="space-y-3">
-                {alerts.slice(0, 3).map((alert, i) => (
-                  <AlertCard key={alert.id} alert={alert} delay={i * 0.05} />
-                ))}
+                {alerts.slice(0, 3).map((alert, i) => {
+                  const geneticFlag = analysis?.geneticFlags.find(
+                    (f) => f.source === "lab" && alert.title.startsWith(f.biomarkerName)
+                  );
+                  return (
+                    <AlertCard
+                      key={alert.id}
+                      alert={alert}
+                      delay={i * 0.05}
+                      genomeNote={geneticFlag?.explanation}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">No panels uploaded yet.</p>
@@ -138,6 +154,12 @@ export function HomeDashboard() {
           </section>
         </div>
       </div>
+
+      <div className="mt-8">
+        <WhoopTodaySection />
+      </div>
+
+      <CommandCenterInsights />
 
       <section className="mt-8">
         <SectionHeader
@@ -162,10 +184,6 @@ export function HomeDashboard() {
           <EmptyHint href="/upload">Upload lab reports to build your timeline.</EmptyHint>
         )}
       </section>
-
-      <div className="mt-8">
-        <WhoopTodaySection />
-      </div>
 
       <BiomarkerDetailSheet
         biomarker={selected}

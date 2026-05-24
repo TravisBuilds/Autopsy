@@ -12,6 +12,7 @@ import { getMarkerPanelCount } from "@/lib/biomarkers/session-history";
 import { classifyTrend } from "@/lib/biomarkers/trends";
 import { useHealthStore } from "@/stores/health-store";
 import { cn } from "@/lib/utils";
+import type { GeneticBiomarkerFlag } from "@/types/command-center";
 import type { BiomarkerReading } from "@/types/health";
 
 const categoryLabels: Record<string, string> = {
@@ -30,6 +31,7 @@ interface BiomarkerCardProps {
   delay?: number;
   expanded?: boolean;
   showTrend?: boolean;
+  geneticLink?: GeneticBiomarkerFlag;
   onClick?: () => void;
 }
 
@@ -38,6 +40,7 @@ export function BiomarkerCard({
   delay = 0,
   expanded,
   showTrend,
+  geneticLink,
   onClick,
 }: BiomarkerCardProps) {
   const sessions = useHealthStore((s) => s.testSessions);
@@ -114,6 +117,14 @@ export function BiomarkerCard({
       <p className="mt-2 font-mono text-[10px] text-muted-foreground/70">
         Lab ref. {biomarker.referenceLow}–{biomarker.referenceHigh} {biomarker.unit}
       </p>
+
+      {geneticLink && (
+        <p className="mt-3 rounded-lg border border-violet-500/20 bg-violet-500/5 px-3 py-2 text-[10px] leading-relaxed text-violet-100/85">
+          <span className="font-medium text-violet-200">Genome-linked · </span>
+          {[...new Set(geneticLink.linkedVariants.map((v) => v.gene))].join(", ")} —{" "}
+          {geneticLink.explanation}
+        </p>
+      )}
 
       {expanded && biomarker.insight && (
         <p className="mt-4 border-t border-white/[0.06] pt-4 text-xs leading-relaxed text-muted-foreground">
