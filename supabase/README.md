@@ -13,6 +13,8 @@
 
    Or paste `migrations/001_initial_schema.sql` into **SQL Editor → New query → Run**.
 
+   Then run `migrations/002_genome_schema.sql` for genome tables.
+
 4. In **Authentication → URL configuration**, add:
    - Site URL: `http://localhost:3000` (or your production URL)
    - Redirect URLs: `http://localhost:3000/auth/callback`
@@ -26,5 +28,12 @@
 | `profiles` | Display name + email (auto-created on signup) |
 | `test_sessions` | Lab panels + JSONB readings + optional PDF path |
 | `interventions` | Medications, supplements, etc. |
+| `genome_imports` | One row per genome JSON upload (metadata) |
+| `genome_variants` | Interpreted variants linked to an import |
 
 All tables use Row Level Security (`auth.uid() = user_id`).
+
+## Genome import API
+
+- `POST /api/genome/import` — multipart `file` (JSON array) or raw JSON body; replaces prior import
+- `GET /api/genome/variants` — latest import + variants for the signed-in user

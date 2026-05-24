@@ -1,0 +1,1005 @@
+[
+  {
+    "gene": "SLC6A4",
+    "risk_domain": "neurology",
+    "display_name": "SLC6A4 — Serotonin transporter activity increased/decreased",
+    "variant_id": "rs774676466",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic",
+    "phenotype": [
+      "Serotonin transporter activity increased/decreased"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Serotonin transporter activity increased/decreased. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 92,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [
+      "Sleep Score",
+      "HRV",
+      "Recovery Score"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/12934/",
+    "hgvs": "NC_000017.11:g.30237299_30237341del",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "PRB3",
+    "risk_domain": "other",
+    "display_name": "PRB3 — PRB3M(NULL)",
+    "variant_id": "ClinVar:13734",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic",
+    "phenotype": [
+      "PRB3M(NULL)"
+    ],
+    "display_summary": "Reported association from source spreadsheet: PRB3M(NULL). This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 92,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/13734/",
+    "hgvs": "NC_000012.12:g.11267402dup",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "APOA2",
+    "risk_domain": "cardiovascular",
+    "display_name": "APOA2 — Hypercholesterolemia familial 1",
+    "variant_id": "rs5082",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Pathogenic",
+    "phenotype": [
+      "Hypercholesterolemia familial 1"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Hypercholesterolemia familial 1. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 92,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [
+      "LDL Cholesterol",
+      "ApoB",
+      "Non-HDL Cholesterol",
+      "Triglycerides"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/17936/",
+    "hgvs": "NC_000001.11:g.161223893G>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "PERM1",
+    "risk_domain": "metabolic",
+    "display_name": "PERM1 — Renal tubular epithelial cell apoptosis",
+    "variant_id": "ClinVar:1320032",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic",
+    "phenotype": [
+      "Renal tubular epithelial cell apoptosis",
+      "Neutrophil inclusion bodies"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Renal tubular epithelial cell apoptosis, Neutrophil inclusion bodies. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 92,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [
+      "Fasting Glucose",
+      "Hemoglobin A1c",
+      "Urate",
+      "Creatinine",
+      "eGFR",
+      "Urine ACR"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1320032/",
+    "hgvs": "NC_000001.11:g.976215A>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "CPLANE1",
+    "risk_domain": "neurology",
+    "display_name": "CPLANE1 — Joubert syndrome 17",
+    "variant_id": "ClinVar:2429463",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic",
+    "phenotype": [
+      "Joubert syndrome 17",
+      "CPLANE1-related condition"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Joubert syndrome 17, CPLANE1-related condition. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 92,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [
+      "Sleep Score",
+      "HRV",
+      "Recovery Score"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/2429463/",
+    "hgvs": "NC_000005.10:g.37167210dup",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "CCL2",
+    "risk_domain": "cardiovascular",
+    "display_name": "CCL2 — Spina bifida susceptibility to",
+    "variant_id": "rs1024611",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic, risk factor",
+    "phenotype": [
+      "Spina bifida susceptibility to",
+      "Coronary artery disease modifier of",
+      "Coronary artery disease development of in HIV",
+      "Mycobacterium tuberculosis susceptibility to"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Spina bifida susceptibility to, Coronary artery disease modifier of, Coronary artery disease development of in HIV, Mycobacterium tuberculosis susceptibility to. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 95,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [
+      "LDL Cholesterol",
+      "ApoB",
+      "Non-HDL Cholesterol",
+      "Triglycerides"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/14207/",
+    "hgvs": "NC_000017.11:g.34252769A>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "NQO1",
+    "risk_domain": "oncology",
+    "display_name": "NQO1 — Lung carcinoma",
+    "variant_id": "rs1800566",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic, risk factor",
+    "phenotype": [
+      "Lung carcinoma",
+      "Benzene toxicity susceptibility to",
+      "Leukemia post-chemotherapy susceptibility to",
+      "Breast cancer post-chemotherapy poor survival in"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Lung carcinoma, Benzene toxicity susceptibility to, Leukemia post-chemotherapy susceptibility to, Breast cancer post-chemotherapy poor survival in. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 95,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/16809/",
+    "hgvs": "NC_000016.10:g.69711242G>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "IL4R",
+    "risk_domain": "inflammation",
+    "display_name": "IL4R — Acquired immunodeficiency syndrome slow progression to",
+    "variant_id": "rs1805010",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Pathogenic, protective",
+    "phenotype": [
+      "Acquired immunodeficiency syndrome slow progression to",
+      "Atopy resistance to"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Acquired immunodeficiency syndrome slow progression to, Atopy resistance to. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 84,
+    "clinical_confidence": "high",
+    "linked_biomarkers": [
+      "CRP",
+      "WBC",
+      "Neutrophils"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/14666/",
+    "hgvs": "NC_000016.10:g.27344882A>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "SAMD9",
+    "risk_domain": "oncology",
+    "display_name": "SAMD9 — Normophosphatemic familial tumoral calcinosis",
+    "variant_id": "rs1554337424",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Normophosphatemic familial tumoral calcinosis"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Normophosphatemic familial tumoral calcinosis. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/556683/",
+    "hgvs": "NC_000007.14:g.93105966del",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "CDCA8",
+    "risk_domain": "inflammation",
+    "display_name": "CDCA8 — Neutrophil inclusion bodies",
+    "variant_id": "ClinVar:1320033",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Neutrophil inclusion bodies"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Neutrophil inclusion bodies. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [
+      "WBC",
+      "Neutrophils",
+      "Hemoglobin",
+      "Ferritin",
+      "Vitamin B12"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1320033/",
+    "hgvs": "NC_000001.11:g.37708314_37708316del",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "GBP1",
+    "risk_domain": "inflammation",
+    "display_name": "GBP1 — Neutrophil inclusion bodies",
+    "variant_id": "ClinVar:1320035",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Neutrophil inclusion bodies"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Neutrophil inclusion bodies. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [
+      "WBC",
+      "Neutrophils",
+      "Hemoglobin",
+      "Ferritin",
+      "Vitamin B12"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1320035/",
+    "hgvs": "NC_000001.11:g.89054648_89054653del",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "ITPKB",
+    "risk_domain": "oncology",
+    "display_name": "ITPKB — Myeloproliferative neoplasm unclassifiable",
+    "variant_id": "ClinVar:1705897",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Myeloproliferative neoplasm unclassifiable"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Myeloproliferative neoplasm unclassifiable. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [
+      "WBC",
+      "Neutrophils",
+      "Hemoglobin",
+      "Ferritin",
+      "Vitamin B12"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1705897/",
+    "hgvs": "NC_000001.11:g.226735804G>T",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "ITPKB",
+    "risk_domain": "oncology",
+    "display_name": "ITPKB — Myeloproliferative neoplasm unclassifiable",
+    "variant_id": "ClinVar:1705899",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Myeloproliferative neoplasm unclassifiable"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Myeloproliferative neoplasm unclassifiable. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [
+      "WBC",
+      "Neutrophils",
+      "Hemoglobin",
+      "Ferritin",
+      "Vitamin B12"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1705899/",
+    "hgvs": "NC_000001.11:g.226736237A>C",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "DNAH5",
+    "risk_domain": "inflammation",
+    "display_name": "DNAH5 — Primary ciliary dyskinesia 3",
+    "variant_id": "ClinVar:1725159",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Primary ciliary dyskinesia 3"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Primary ciliary dyskinesia 3. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [
+      "CRP",
+      "WBC",
+      "Neutrophils"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1725159/",
+    "hgvs": "NC_000005.10:g.13786308A>T",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "C7",
+    "risk_domain": "inflammation",
+    "display_name": "C7 — Complement component 7 deficiency",
+    "variant_id": "ClinVar:2501292",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Likely pathogenic",
+    "phenotype": [
+      "Complement component 7 deficiency"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Complement component 7 deficiency. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 78,
+    "clinical_confidence": "moderate",
+    "linked_biomarkers": [
+      "CRP",
+      "WBC",
+      "Neutrophils"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/2501292/",
+    "hgvs": "NC_000005.10:g.40981669TCT[1]",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "CCR5",
+    "risk_domain": "inflammation",
+    "display_name": "CCR5 — Acquired immunodeficiency syndrome delayed progression to",
+    "variant_id": "rs1799987",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity, protective",
+    "phenotype": [
+      "Acquired immunodeficiency syndrome delayed progression to",
+      "CCR5 PROMOTER POLYMORPHISM",
+      "Susceptibility to HIV infection"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Acquired immunodeficiency syndrome delayed progression to, CCR5 PROMOTER POLYMORPHISM, Susceptibility to HIV infection. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 47,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "CRP",
+      "WBC",
+      "Neutrophils"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/8189/",
+    "hgvs": "NC_000003.12:g.46370444A>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "UGT1A",
+    "risk_domain": "liver",
+    "display_name": "UGT1A — Gilbert syndrome susceptibility to",
+    "variant_id": "rs4124874",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "not provided",
+      "Gilbert syndrome susceptibility to",
+      "Gilbert syndrome"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not provided, Gilbert syndrome susceptibility to, Gilbert syndrome. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "ALT",
+      "GGT",
+      "Total Bilirubin"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/12288/",
+    "hgvs": "NC_000002.12:g.233757013T>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "BCHE",
+    "risk_domain": "pharmacogenomics",
+    "display_name": "BCHE — Deficiency of butyrylcholinesterase",
+    "variant_id": "rs1803274",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "not specified",
+      "not provided",
+      "Deficiency of butyrylcholinesterase",
+      "Butyrylcholinesterase activity"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not specified, not provided, Deficiency of butyrylcholinesterase, Butyrylcholinesterase activity. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Medication Response",
+      "Adverse Reaction History"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/13220/",
+    "hgvs": "NC_000003.12:g.165773492C>T",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "HNF1A",
+    "risk_domain": "cardiovascular",
+    "display_name": "HNF1A — Maturity onset diabetes mellitus in young",
+    "variant_id": "rs1169288",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "not specified",
+      "Maturity onset diabetes mellitus in young",
+      "not provided",
+      "Nonpapillary renal cell carcinoma",
+      "SERUM HDL CHOLESTEROL LEVEL MODIFIER OF",
+      "Maturity-onset diabetes of the young type 3",
+      "Insulin resistance susceptibility to",
+      "Type II diabetes mellitus"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not specified, Maturity onset diabetes mellitus in young, not provided, Nonpapillary renal cell carcinoma, SERUM HDL CHOLESTEROL LEVEL MODIFIER OF, Maturity-onset diabetes of the young type 3, Insulin resistance susceptibility to, Type II diabetes mellitus. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "LDL Cholesterol",
+      "ApoB",
+      "Non-HDL Cholesterol",
+      "Triglycerides"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/14937/",
+    "hgvs": "NC_000012.12:g.120978847A>C",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "PDGFRA",
+    "risk_domain": "oncology",
+    "display_name": "PDGFRA — Myeloproliferative neoplasm unclassifiable",
+    "variant_id": "rs35597368",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "Myeloproliferative neoplasm unclassifiable",
+      "Hereditary cancer-predisposing syndrome",
+      "not specified",
+      "not provided",
+      "Gastrointestinal stroma tumor",
+      "Idiopathic hypereosinophilic syndrome"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Myeloproliferative neoplasm unclassifiable, Hereditary cancer-predisposing syndrome, not specified, not provided, Gastrointestinal stroma tumor, Idiopathic hypereosinophilic syndrome. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "WBC",
+      "Neutrophils",
+      "Hemoglobin",
+      "Ferritin",
+      "Vitamin B12"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/41794/",
+    "hgvs": "NC_000004.12:g.54273604T>C",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "GALC",
+    "risk_domain": "neurology",
+    "display_name": "GALC — Abnormal brain morphology",
+    "variant_id": "rs11300320",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "Abnormal brain morphology",
+      "Galactosylceramide beta-galactosidase deficiency",
+      "not specified",
+      "not provided"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Abnormal brain morphology, Galactosylceramide beta-galactosidase deficiency, not specified, not provided. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Sleep Score",
+      "HRV",
+      "Recovery Score"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/92493/",
+    "hgvs": "NC_000014.9:g.87950762del",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "SLC25A13",
+    "risk_domain": "metabolic",
+    "display_name": "SLC25A13 — Citrullinemia type II adult-onset",
+    "variant_id": "rs541276426",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "Citrullinemia type II adult-onset",
+      "Late-onset citrullinemia",
+      "Citrin deficiency",
+      "not specified",
+      "not provided",
+      "Neonatal intrahepatic cholestasis due to citrin deficiency",
+      "Citrullinemia type II",
+      "Citrullinemia type I"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Citrullinemia type II adult-onset, Late-onset citrullinemia, Citrin deficiency, not specified, not provided, Neonatal intrahepatic cholestasis due to citrin deficiency, Citrullinemia type II, Citrullinemia type I. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Fasting Glucose",
+      "Hemoglobin A1c",
+      "Urate",
+      "Creatinine",
+      "eGFR",
+      "Urine ACR"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/193371/",
+    "hgvs": "NC_000007.14:g.96321955A>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "CYP21A2",
+    "risk_domain": "pharmacogenomics",
+    "display_name": "CYP21A2 — Classic congenital adrenal hyperplasia due to 21-hydroxylase deficiency",
+    "variant_id": "rs6467",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "not specified",
+      "not provided",
+      "Classic congenital adrenal hyperplasia due to 21-hydroxylase deficiency"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not specified, not provided, Classic congenital adrenal hyperplasia due to 21-hydroxylase deficiency. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Medication Response",
+      "Adverse Reaction History"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/196278/",
+    "hgvs": "NC_000006.12:g.32039081C>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "LDLR",
+    "risk_domain": "cardiovascular",
+    "display_name": "LDLR — Homozygous familial hypercholesterolemia",
+    "variant_id": "rs730882109",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "Homozygous familial hypercholesterolemia",
+      "Cardiovascular phenotype",
+      "Familial hypercholesterolemia",
+      "not provided",
+      "Hypercholesterolemia familial 1"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Homozygous familial hypercholesterolemia, Cardiovascular phenotype, Familial hypercholesterolemia, not provided, Hypercholesterolemia familial 1. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "LDL Cholesterol",
+      "ApoB",
+      "Non-HDL Cholesterol",
+      "Triglycerides"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/200921/",
+    "hgvs": "NC_000019.10:g.11116900C>T",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "SLC3A1",
+    "risk_domain": "metabolic",
+    "display_name": "SLC3A1 — Cystinuria",
+    "variant_id": "rs698761",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "not provided",
+      "Cystinuria"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not provided, Cystinuria. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Fasting Glucose",
+      "Hemoglobin A1c",
+      "Urate",
+      "Creatinine",
+      "eGFR",
+      "Urine ACR"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/336214/",
+    "hgvs": "NC_000002.12:g.44320435G>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "VDR",
+    "risk_domain": "other",
+    "display_name": "VDR — Vitamin D-dependent rickets type II with alopecia",
+    "variant_id": "rs2228570",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "not specified",
+      "not provided",
+      "Vitamin D-dependent rickets type II with alopecia"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not specified, not provided, Vitamin D-dependent rickets type II with alopecia. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/308887/",
+    "hgvs": "NC_000012.12:g.47879112A>G",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "TCF3",
+    "risk_domain": "oncology",
+    "display_name": "TCF3 — Myeloproliferative neoplasm unclassifiable",
+    "variant_id": "ClinVar:1165836",
+    "genotype": "Homozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity",
+    "phenotype": [
+      "Myeloproliferative neoplasm unclassifiable",
+      "not provided"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Myeloproliferative neoplasm unclassifiable, not provided. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "WBC",
+      "Neutrophils",
+      "Hemoglobin",
+      "Ferritin",
+      "Vitamin B12"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/1165836/",
+    "hgvs": "NC_000019.10:g.1615797G>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "UGT1A",
+    "risk_domain": "liver",
+    "display_name": "UGT1A — UGT1A1-related condition",
+    "variant_id": "rs35350960",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity, other",
+    "phenotype": [
+      "UGT1A1-related condition",
+      "not specified",
+      "not provided",
+      "Gilbert syndrome",
+      "Crigler-Najjar syndrome type II"
+    ],
+    "display_summary": "Reported association from source spreadsheet: UGT1A1-related condition, not specified, not provided, Gilbert syndrome, Crigler-Najjar syndrome type II. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "ALT",
+      "GGT",
+      "Total Bilirubin"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/12274/",
+    "hgvs": "NC_000002.12:g.233760973C>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "UGT1A",
+    "risk_domain": "pharmacogenomics",
+    "display_name": "UGT1A — Gilbert syndrome",
+    "variant_id": "rs3064744",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity, drug response, other",
+    "phenotype": [
+      "Gilbert syndrome",
+      "Lucey-Driscoll syndrome",
+      "Crigler-Najjar syndrome type II",
+      "Bilirubin serum level of quantitative trait locus 1",
+      "Crigler-Najjar syndrome type 1",
+      "not specified",
+      "not provided",
+      "Irinotecan response"
+    ],
+    "display_summary": "Reported association from source spreadsheet: Gilbert syndrome, Lucey-Driscoll syndrome, Crigler-Najjar syndrome type II, Bilirubin serum level of quantitative trait locus 1, Crigler-Najjar syndrome type 1, not specified, not provided, Irinotecan response. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 60,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Medication Response",
+      "Adverse Reaction History"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/12275/",
+    "hgvs": "NC_000002.12:g.233760235TA[8]",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "UGT1A",
+    "risk_domain": "pharmacogenomics",
+    "display_name": "UGT1A — Bilirubin serum level of quantitative trait locus 1",
+    "variant_id": "rs4148323",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity, drug response",
+    "phenotype": [
+      "not provided",
+      "not specified",
+      "Bilirubin serum level of quantitative trait locus 1",
+      "Gilbert syndrome",
+      "Lucey-Driscoll syndrome",
+      "Crigler-Najjar syndrome type II",
+      "Irinotecan response"
+    ],
+    "display_summary": "Reported association from source spreadsheet: not provided, not specified, Bilirubin serum level of quantitative trait locus 1, Gilbert syndrome, Lucey-Driscoll syndrome, Crigler-Najjar syndrome type II, Irinotecan response. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 60,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Medication Response",
+      "Adverse Reaction History"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/12280/",
+    "hgvs": "NC_000002.12:g.233760498G>A",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  },
+  {
+    "gene": "ACTN3",
+    "risk_domain": "fitness",
+    "display_name": "ACTN3 — INCREASED COLD TOLERANCE",
+    "variant_id": "rs1815739",
+    "genotype": "Heterozygous variant",
+    "clinical_significance": "Conflicting interpretations of pathogenicity, affects",
+    "phenotype": [
+      "INCREASED COLD TOLERANCE",
+      "ACTININ ALPHA-3 POLYMORPHISM",
+      "Actn3 deficiency",
+      "Sprinting performance"
+    ],
+    "display_summary": "Reported association from source spreadsheet: INCREASED COLD TOLERANCE, ACTININ ALPHA-3 POLYMORPHISM, Actn3 deficiency, Sprinting performance. This genomic finding is for review and should be interpreted with updated clinical databases before use in health decisions.",
+    "importance_score": 55,
+    "clinical_confidence": "uncertain",
+    "linked_biomarkers": [
+      "Strain",
+      "Recovery Score",
+      "HRV"
+    ],
+    "evidence_source": [
+      "ClinVar"
+    ],
+    "evidence_url": "https://www.ncbi.nlm.nih.gov/clinvar/variation/18312/",
+    "hgvs": "NC_000011.10:g.66560624C>T",
+    "last_interpreted_at": "2026-05-23",
+    "knowledge_sources": [
+      "Uploaded genome spreadsheet",
+      "ClinVar"
+    ],
+    "interpretation_version": "2026.1"
+  }
+]
