@@ -17,7 +17,7 @@
 
 4. In **Authentication → URL configuration**, add:
    - Site URL: `http://localhost:3000` (or your production URL)
-   - Redirect URLs: `http://localhost:3000/auth/callback`
+   - Redirect URLs: `http://localhost:3000/auth/callback` (used for email confirm and password reset)
 
 5. Confirm the **lab-pdfs** storage bucket exists (created by migration).
 
