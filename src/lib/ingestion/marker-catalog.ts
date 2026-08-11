@@ -33,6 +33,31 @@ export const MARKER_CATALOG: MarkerDefinition[] = [
     aliases: [/^apo\s*b/i, /apolipoprotein\s*b/i],
   },
   {
+    canonical: "Non-HDL Cholesterol",
+    category: "cardiovascular",
+    aliases: [/^non hdl cholesterol/i, /^non-hdl/i],
+  },
+  {
+    canonical: "Chol/HDL Ratio",
+    category: "cardiovascular",
+    aliases: [/chol\/hdl/i, /risk ratio/i],
+  },
+  {
+    canonical: "Total Protein",
+    category: "metabolic",
+    aliases: [/^total protein/i],
+  },
+  {
+    canonical: "ACR",
+    category: "kidney",
+    aliases: [/^acr\b/i, /microalbumin\/creatinine/i, /albumin\/creatinine ratio/i],
+  },
+  {
+    canonical: "Urine Creatinine",
+    category: "kidney",
+    aliases: [/^urine creatinine/i],
+  },
+  {
     canonical: "Glucose",
     category: "metabolic",
     aliases: [/^glucose/i, /^glucose fasting/i, /^fasting glucose/i, /^blood sugar/i],
@@ -55,7 +80,7 @@ export const MARKER_CATALOG: MarkerDefinition[] = [
   {
     canonical: "GGT",
     category: "liver",
-    aliases: [/^ggt\b/i, /gamma.?glutamyl/i],
+    aliases: [/^ggt\b/i, /^gamma gt\b/i, /gamma.?glutamyl/i],
   },
   {
     canonical: "Bilirubin",

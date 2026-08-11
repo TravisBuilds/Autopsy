@@ -5,8 +5,6 @@ import Link from "next/link";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { authCallbackUrl } from "@/lib/auth/redirect";
-import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export default function ForgotPasswordPage() {
@@ -33,12 +31,13 @@ export default function ForgotPasswordPage() {
     setMessage(null);
 
     try {
-      const supabase = createClient();
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-        email.trim(),
-        { redirectTo: authCallbackUrl("/auth/reset-password") }
-      );
-      if (resetError) throw resetError;
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = (await res.json()) as { error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Could not send reset email");
       setMessage(
         "If an account exists for that email, we sent a reset link. Check your inbox and spam folder."
       );

@@ -1,5 +1,7 @@
 "use client";
 
+import { groupTextItemsIntoLines } from "@/lib/ingestion/extract-pdf-lines";
+
 /**
  * Extract plain text from a PDF, preserving row structure via Y-position grouping.
  * LifeLabs/OSCAR reports break if items are joined with spaces only.
@@ -24,31 +26,4 @@ export async function extractPdfText(file: File): Promise<string> {
   return pages.join("\n");
 }
 
-interface TextItem {
-  str: string;
-  transform: number[];
-}
-
-function groupTextItemsIntoLines(items: unknown[]): string {
-  const rows = new Map<number, { x: number; str: string }[]>();
-
-  for (const item of items) {
-    if (!item || typeof item !== "object" || !("str" in item)) continue;
-    const t = item as TextItem;
-    const text = t.str?.trim();
-    if (!text) continue;
-
-    const y = Math.round(t.transform[5]);
-    const x = t.transform[4];
-    if (!rows.has(y)) rows.set(y, []);
-    rows.get(y)!.push({ x, str: text });
-  }
-
-  const sortedYs = [...rows.keys()].sort((a, b) => b - a);
-  return sortedYs
-    .map((y) => {
-      const parts = rows.get(y)!.sort((a, b) => a.x - b.x);
-      return parts.map((p) => p.str).join("  ");
-    })
-    .join("\n");
-}
+export { groupTextItemsIntoLines } from "@/lib/ingestion/extract-pdf-lines";

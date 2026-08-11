@@ -9,6 +9,7 @@ const UNIT_ALIASES: Record<string, string> = {
   "mmol/l": "mmol/L",
   "mg/l": "mg/L",
   "g/l": "g/L",
+  "%": "%",
   "iu/l": "IU/L",
   "u/l": "U/L",
   "x10e9/l": "×10⁹/L",

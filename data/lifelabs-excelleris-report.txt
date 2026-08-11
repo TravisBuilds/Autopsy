@@ -1,0 +1,87 @@
+Patient: WU, TRAVIS CHE-HSU
+Age: 32 years Sex: M
+Date of Birth: Jun 06 1994
+PHN: 9147243866 BC
+Patient's Phone: (604)922-0098
+Lab No: 26-136217049
+Patient ID:
+Collected on: Aug 05 2026 09:26
+Reported on: Aug 05 2026 18:50
+Reported by: LifeLabs
+Telephone: 604-431-7206
+Toll Free: 1-800-431-7206
+Fax: 604-412-4445
+Printed on: 2026-08-10 22:33
+Page 1 of 2
+Ordered by: SCOTT Dr. ROBERT
+Reported to: SCOTT Dr. ROBERT
+Test Flag Result Reference Range - Units
+General Comments
+Hours After Meal
+hours pc: 16
+Biochemical Investigation of Anemias and Iron Overload
+Vitamin B12 348 pmol/L
+> 220 pmol/L Normal,
+deficiency unlikely
+150-220 pmol/L Borderline,
+deficiency is possible
+< 150 pmol/L Low,
+consistent with deficiency
+Effective July 15 2024, clinical cut-offs
+will replace reference intervals for test
+interpretation.
+General Chemistry
+Glucose Fasting 5.2 3.3-5.5 mmol/L
+Hemoglobin A1C
+Hemoglobin A1C 5.6 4.5-5.9 %
+Therapeutic target for most adults with
+type 1 or type 2 diabetes is <=7.0%. In
+the frail elderly and patients who are
+prone to hypoglycemia, target is <=8.5%.
+A1c >=6.5% meets the criterion for type
+2 diabetes mellitus in adults.
+See 2018 Diabetes Canada guidelines.
+Total Protein 77 60-80 g/L
+Total Bilirubin A 19 <17 umol/L
+Gamma GT 39 <65 U/L
+Alanine Aminotransferase 31 <50 U/L
+FINAL RESULTS
+Lipids
+Cholesterol A 6.42 2.00-5.19 mmol/L
+LDL Cholesterol A 3.72 1.50-3.40 mmol/L
+The optimal LDL cholesterol level for
+intermediate and high risk individuals
+is <= 2.00 mmol/L. If triglycerides are
+=> 1.50 mmol/L, consider monitoring of
+alternate lipid targets non HDL-cholest-
+erol or apoB. For low risk individuals
+with LDL cholesterol => 5.00 mmol/L,
+target reduction of LDL cholesterol
+=> 50 percent. See Can J Cardiol 2013
+vol 29 pgs 151 to 167.
+HDL Cholesterol 1.38 >0.99 mmol/L
+Chol/HDL (Risk Ratio) 4.65 <4.9
+Non HDL Cholesterol 5.04 mmol/L
+Non HDL-cholesterol is calculated from
+total cholesterol and HDL-C and is not
+affected by the fasting status of the
+patient. The optimal non HDL-cholesterol
+level for intermediate and high risk
+individuals is <= 2.60 mmol/L. See Can J
+Cardiol 2013 vol 29 pgs 151 to 167.
+Triglycerides A 2.91 <2.21 mmol/L
+Apolipoprotein B-100 0.88 0.59-1.25 g/L
+Refer to 2021 CCS guidelines for ApoB
+thresholds based on risk stratification.
+2021 CCS Guidelines. Can J Cardiol. 2021
+S0828
+Random Urine Chemistry
+Urine Creatinine
+Urine Creatinine 27.0 mmol/L
+No reference range has been established
+for this test.
+Urine (Micro)albumin
+ACR (Microalbumin/Creatinine Ratio) <1.0 <2.0 mg/mmol
+Note: Reference interval for albumin/creatinine
+ratio as per BCMA/MSC guidelines.
+FINAL RESULTS

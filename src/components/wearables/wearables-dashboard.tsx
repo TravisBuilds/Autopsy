@@ -7,15 +7,14 @@ import { CheckCircle2, Link2, LogOut, Watch } from "lucide-react";
 import { WhoopDataPanel } from "@/components/wearables/whoop-data-panel";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { signOutClient } from "@/lib/auth/sign-out-client";
 import { useAuthStore } from "@/stores/auth-store";
-import { useHealthStore } from "@/stores/health-store";
 
 export function WearablesDashboard() {
   const searchParams = useSearchParams();
   const user = useAuthStore((s) => s.user);
   const whoopConnected = useAuthStore((s) => s.whoopConnected);
   const setWhoopStatus = useAuthStore((s) => s.setWhoopStatus);
-  const signOut = useAuthStore((s) => s.signOut);
 
   const [message, setMessage] = useState<string | null>(null);
   const whoopParam = searchParams.get("whoop");
@@ -63,16 +62,7 @@ export function WearablesDashboard() {
   };
 
   const handleSignOut = async () => {
-    await fetch("/api/auth/signout", { method: "POST" });
-    if (typeof window !== "undefined") {
-      const { createClient } = await import("@/lib/supabase/client");
-      const { isSupabaseConfigured } = await import("@/lib/supabase/env");
-      if (isSupabaseConfigured()) {
-        await createClient().auth.signOut();
-      }
-    }
-    signOut();
-    useHealthStore.getState().clearAllData();
+    await signOutClient();
     setMessage("Signed out.");
   };
 

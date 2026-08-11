@@ -55,9 +55,21 @@ function parseDMonYToIso(raw: string): string | null {
   return `${m[3]}-${mon}-${day}`;
 }
 
+/** LifeLabs Excelleris: Aug 05 2026 */
+function parseMonDYToIso(raw: string): string | null {
+  const m = raw.match(/^([A-Za-z]{3})\s+(\d{1,2})\s+(\d{4})$/);
+  if (!m) return null;
+  const mon = MONTH_TO_NUM[m[1].toLowerCase().slice(0, 3)];
+  if (!mon) return null;
+  const day = m[2].padStart(2, "0");
+  return `${m[3]}-${mon}-${day}`;
+}
+
 function parseTokenToIso(token: string): string | null {
   const iso = token.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (iso) return iso[0];
+  const monFirst = parseMonDYToIso(token.trim());
+  if (monFirst) return monFirst;
   return parseDMonYToIso(token);
 }
 
@@ -71,6 +83,11 @@ function datesOnLine(line: string): string[] {
 
   for (const m of line.matchAll(/\b(\d{1,2}[-/][A-Za-z]{3}[-/]\d{4})\b/g)) {
     const iso = parseTokenToIso(m[1].replace(/\//g, "-"));
+    if (iso) found.push(iso);
+  }
+
+  for (const m of line.matchAll(/\b([A-Za-z]{3}\s+\d{1,2}\s+\d{4})\b/g)) {
+    const iso = parseTokenToIso(m[1]);
     if (iso) found.push(iso);
   }
 
@@ -142,6 +159,12 @@ function newestPlausibleDMonY(body: string): string | null {
   const candidates: string[] = [];
   for (const m of body.matchAll(/\b(\d{1,2}[-/][A-Za-z]{3}[-/]\d{4})\b/g)) {
     const iso = parseDMonYToIso(m[1].replace(/\//g, "-"));
+    if (!iso || !isPlausibleLabDate(iso)) continue;
+    if (isNearDobContext(body, m.index ?? 0)) continue;
+    candidates.push(iso);
+  }
+  for (const m of body.matchAll(/\b([A-Za-z]{3}\s+\d{1,2}\s+\d{4})\b/g)) {
+    const iso = parseMonDYToIso(m[1]);
     if (!iso || !isPlausibleLabDate(iso)) continue;
     if (isNearDobContext(body, m.index ?? 0)) continue;
     candidates.push(iso);

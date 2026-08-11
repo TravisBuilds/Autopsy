@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { AlertCard } from "@/components/cards/alert-card";
 import { BiomarkerCard } from "@/components/cards/biomarker-card";
@@ -35,6 +36,17 @@ function EmptyHint({ href, children }: { href: string; children: React.ReactNode
   );
 }
 
+function PasswordResetBanner() {
+  const searchParams = useSearchParams();
+  if (searchParams.get("reset") !== "success") return null;
+
+  return (
+    <p className="mb-6 rounded-lg border border-teal-500/20 bg-teal-500/10 px-4 py-3 text-sm text-teal-200/90">
+      Your password was updated. You&apos;re signed in with your new password.
+    </p>
+  );
+}
+
 export function HomeDashboard() {
   const [selected, setSelected] = useState<BiomarkerReading | null>(null);
   const priorityBiomarkers = usePriorityBiomarkers(3);
@@ -55,6 +67,10 @@ export function HomeDashboard() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <PasswordResetBanner />
+      </Suspense>
+
       <div className="mb-8">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-muted-foreground">
           {APP_TAGLINE}

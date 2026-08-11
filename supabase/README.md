@@ -15,11 +15,19 @@
 
    Then run `migrations/002_genome_schema.sql` for genome tables.
 
-4. In **Authentication → URL configuration**, add:
-   - Site URL: `http://localhost:3000` (or your production URL)
-   - Redirect URLs: `http://localhost:3000/auth/callback` (used for email confirm and password reset)
+4. In **Authentication → URL configuration**, set:
+   - **Site URL:** `https://pulsecheck.space` (not localhost — Supabase emails use this as the default base)
+   - **Redirect URLs** (add all that apply):
+     - `https://pulsecheck.space/auth/callback`
+     - `https://pulsecheck.space/auth/reset-password`
+     - `http://localhost:3000/auth/callback` (local dev)
+     - `http://localhost:3000/auth/reset-password` (local dev)
 
-5. Confirm the **lab-pdfs** storage bucket exists (created by migration).
+5. Password reset flow in the app:
+   - **Forgot password:** `/login/forgot-password` → email link → `/auth/callback?next=/auth/reset-password` → set new password
+   - **Signed in:** **Account** in the sidebar → `/settings` → change password without email
+
+6. Confirm the **lab-pdfs** storage bucket exists (created by migration).
 
 ## Tables
 

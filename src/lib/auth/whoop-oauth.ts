@@ -3,6 +3,7 @@ import {
   WHOOP_AUTH_URL,
   WHOOP_TOKEN_URL,
 } from "@/lib/auth/constants";
+import { resolveAppOriginFromRequest } from "@/lib/auth/redirect";
 
 export function getWhoopRedirectUri(origin: string): string {
   const base = origin.replace(/\/$/, "");
@@ -22,9 +23,7 @@ export function generateWhoopState(): string {
 }
 
 export function resolveAppOrigin(request: Request): string {
-  const fromEnv = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
-  if (fromEnv) return fromEnv;
-  return new URL(request.url).origin;
+  return resolveAppOriginFromRequest(request);
 }
 
 export type WhoopTokenResult =
