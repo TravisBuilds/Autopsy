@@ -36,7 +36,17 @@ export default function ForgotPasswordPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
-      const data = (await res.json()) as { error?: string };
+
+      let data: { error?: string } = {};
+      const text = await res.text();
+      if (text) {
+        try {
+          data = JSON.parse(text) as { error?: string };
+        } catch {
+          throw new Error("Unexpected server response. Try again in a moment.");
+        }
+      }
+
       if (!res.ok) throw new Error(data.error ?? "Could not send reset email");
       setMessage(
         "If an account exists for that email, we sent a reset link. Check your inbox and spam folder."
