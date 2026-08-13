@@ -9,13 +9,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Supabase is not configured" }, { status: 503 });
     }
 
-    const body = (await request.json()) as { email?: string };
+    const body = (await request.json()) as { email?: string; origin?: string };
     const email = body.email?.trim();
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const redirectTo = authCallbackUrlForRequest(request, "/auth/reset-password");
+    const redirectTo = authCallbackUrlForRequest(
+      request,
+      "/auth/reset-password",
+      body.origin
+    );
     const supabase = await createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
 

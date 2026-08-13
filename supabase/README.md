@@ -16,12 +16,14 @@
    Then run `migrations/002_genome_schema.sql` for genome tables.
 
 4. In **Authentication → URL configuration**, set:
-   - **Site URL:** `https://pulsecheck.space` (not localhost — Supabase emails use this as the default base)
+   - **Site URL:** `https://pulsecheck.space` (not localhost — Supabase emails fall back to this if `redirectTo` is missing or not allowlisted)
    - **Redirect URLs** (add all that apply):
      - `https://pulsecheck.space/auth/callback`
      - `https://pulsecheck.space/auth/reset-password`
      - `http://localhost:3000/auth/callback` (local dev)
      - `http://localhost:3000/auth/reset-password` (local dev)
+
+   The app sends `redirectTo` from the **browser origin** (e.g. `https://pulsecheck.space/auth/callback?next=/auth/reset-password`). If Site URL is still localhost, reset emails will keep pointing at localhost.
 
 5. Password reset flow in the app:
    - **Forgot password:** `/login/forgot-password` → email link → `/auth/callback?next=/auth/reset-password` → set new password

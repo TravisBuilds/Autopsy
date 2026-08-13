@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { resolveAppOriginFromRequest } from "@/lib/auth/redirect";
 import { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
+  const origin = resolveAppOriginFromRequest(request);
   const code = searchParams.get("code");
   const nextParam = searchParams.get("next") ?? "/";
   const next =
