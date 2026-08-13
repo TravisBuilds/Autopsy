@@ -6,6 +6,18 @@ import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/env";
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
   const pathname = request.nextUrl.pathname;
+  const authCode = request.nextUrl.searchParams.get("code");
+
+  // Supabase Site URL fallback lands on `/?code=...`. Send it through our callback.
+  if (
+    authCode &&
+    pathname !== "/auth/callback" &&
+    pathname !== "/auth/reset-password"
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
 
   const supabase = createServerClient(getSupabaseUrl(), getSupabaseAnonKey(), {
     cookies: {

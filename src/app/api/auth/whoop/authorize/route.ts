@@ -7,6 +7,8 @@ import {
   getWhoopRedirectUri,
   resolveAppOrigin,
 } from "@/lib/auth/whoop-oauth";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export async function GET(request: Request) {
   const clientId = process.env.WHOOP_CLIENT_ID?.trim();
@@ -14,6 +16,18 @@ export async function GET(request: Request) {
 
   const origin = resolveAppOrigin(request);
   const redirectUri = getWhoopRedirectUri(origin);
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      const login = new URL("/login", origin);
+      login.searchParams.set("next", "/wearables");
+      return NextResponse.redirect(login);
+    }
+  }
 
   if (!clientId || !clientSecret) {
     return NextResponse.redirect(

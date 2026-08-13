@@ -3,7 +3,7 @@ import {
   WHOOP_AUTH_URL,
   WHOOP_TOKEN_URL,
 } from "@/lib/auth/constants";
-import { resolveAppOriginFromRequest } from "@/lib/auth/redirect";
+import { canonicalAuthOrigin } from "@/lib/auth/redirect";
 
 export function getWhoopRedirectUri(origin: string): string {
   const base = origin.replace(/\/$/, "");
@@ -23,7 +23,7 @@ export function generateWhoopState(): string {
 }
 
 export function resolveAppOrigin(request: Request): string {
-  return resolveAppOriginFromRequest(request);
+  return canonicalAuthOrigin(request);
 }
 
 export type WhoopTokenResult =

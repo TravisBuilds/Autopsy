@@ -103,17 +103,47 @@ export function resolveAppOriginFromRequest(
   );
 }
 
-/** Supabase email / OAuth redirect through `/auth/callback`, then `next`. */
-export function authCallbackUrl(next: string): string {
-  const path = next.startsWith("/") ? next : `/${next}`;
-  return `${getAppOrigin()}/auth/callback?next=${encodeURIComponent(path)}`;
+/**
+ * Canonical public origin for Supabase email redirects.
+ * Never localhost / vercel.app — those fail the allowlist and emails fall back
+ * to Site URL (`http://localhost:3000/?code=...`).
+ */
+export function canonicalAuthOrigin(
+  request: Request,
+  clientOrigin?: string | null
+): string {
+  const resolved = resolveAppOriginFromRequest(request, clientOrigin);
+  try {
+    const host = new URL(resolved).hostname;
+    if (!isLocalhostHost(host) && !host.endsWith(".vercel.app")) return resolved;
+  } catch {
+    /* use production origin */
+  }
+
+  const requestHost =
+    request.headers.get("x-forwarded-host")?.split(",")[0]?.trim() ||
+    request.headers.get("host")?.split(",")[0]?.trim() ||
+    "";
+  if (isLocalhostHost(requestHost) && process.env.NODE_ENV !== "production") {
+    return resolved;
+  }
+
+  return PRODUCTION_APP_ORIGIN;
+}
+
+/**
+ * Supabase `redirectTo` must be query-string free or it is rejected and
+ * emails use Site URL instead (`http://localhost:3000/?code=...`).
+ * Pass `next` via AUTH_NEXT_COOKIE, not the URL.
+ */
+export function authCallbackUrl(_next?: string): string {
+  return `${getAppOrigin()}/auth/callback`;
 }
 
 export function authCallbackUrlForRequest(
   request: Request,
-  next: string,
+  _next?: string,
   clientOrigin?: string | null
 ): string {
-  const path = next.startsWith("/") ? next : `/${next}`;
-  return `${resolveAppOriginFromRequest(request, clientOrigin)}/auth/callback?next=${encodeURIComponent(path)}`;
+  return `${canonicalAuthOrigin(request, clientOrigin)}/auth/callback`;
 }

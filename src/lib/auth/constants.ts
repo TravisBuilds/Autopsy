@@ -1,4 +1,6 @@
 export const USER_COOKIE = "autopsy_user";
+/** After email auth, `/auth/callback` reads this instead of a `?next=` query (Supabase allowlists ignore query strings). */
+export const AUTH_NEXT_COOKIE = "pc_auth_next";
 export const WHOOP_STATE_COOKIE = "autopsy_whoop_state";
 export const WHOOP_ACCESS_COOKIE = "autopsy_whoop_access";
 export const WHOOP_REFRESH_COOKIE = "autopsy_whoop_refresh";

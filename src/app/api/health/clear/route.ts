@@ -29,6 +29,8 @@ export async function DELETE() {
 
   await supabase.from("test_sessions").delete().eq("user_id", user.id);
   await supabase.from("interventions").delete().eq("user_id", user.id);
+  await supabase.from("whoop_snapshots").delete().eq("user_id", user.id);
+  await supabase.from("whoop_connections").delete().eq("user_id", user.id);
 
   return NextResponse.json({ ok: true });
 }

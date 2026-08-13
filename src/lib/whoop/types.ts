@@ -73,4 +73,7 @@ export interface WhoopDashboardData {
   latest: WearableSnapshot | null;
   history: WearableSnapshot[];
   status: "ready" | "pending" | "empty";
+  connected: boolean;
+  daysOnRecord: number;
+  lastSyncedAt: string | null;
 }

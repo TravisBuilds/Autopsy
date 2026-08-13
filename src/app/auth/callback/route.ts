@@ -1,14 +1,23 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { resolveAppOriginFromRequest } from "@/lib/auth/redirect";
+import { AUTH_NEXT_COOKIE } from "@/lib/auth/constants";
+import { canonicalAuthOrigin } from "@/lib/auth/redirect";
 import { createClient } from "@/lib/supabase/server";
+
+function safeNextPath(value: string | null | undefined): string {
+  if (!value?.startsWith("/") || value.startsWith("/login")) return "/";
+  return value;
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const origin = resolveAppOriginFromRequest(request);
+  const origin = canonicalAuthOrigin(request);
   const code = searchParams.get("code");
-  const nextParam = searchParams.get("next") ?? "/";
-  const next =
-    nextParam.startsWith("/") && !nextParam.startsWith("/login") ? nextParam : "/";
+  const jar = await cookies();
+  const next = safeNextPath(
+    searchParams.get("next") ?? jar.get(AUTH_NEXT_COOKIE)?.value ?? "/"
+  );
+  jar.set(AUTH_NEXT_COOKIE, "", { path: "/", maxAge: 0 });
 
   if (code) {
     const supabase = await createClient();

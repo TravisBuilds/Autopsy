@@ -71,5 +71,8 @@ export function buildWhoopDashboardData(
     latest,
     history: past,
     status: latest ? "ready" : hasPending ? "pending" : "empty",
+    connected: true,
+    daysOnRecord: history.length,
+    lastSyncedAt: new Date().toISOString(),
   };
 }

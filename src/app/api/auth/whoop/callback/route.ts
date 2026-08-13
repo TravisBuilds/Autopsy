@@ -11,6 +11,10 @@ import {
   getWhoopRedirectUri,
   resolveAppOrigin,
 } from "@/lib/auth/whoop-oauth";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { upsertWhoopConnection } from "@/lib/whoop/connection";
+import { fetchWhoopProfile } from "@/lib/whoop/client";
 
 function errorRedirect(origin: string, message: string) {
   const url = new URL("/wearables", origin);
@@ -46,7 +50,7 @@ export async function GET(request: Request) {
   if (!savedState || savedState !== state) {
     return errorRedirect(
       origin,
-      "invalid_state — confirm NEXT_PUBLIC_APP_URL matches the URL in your browser and the WHOOP redirect URI"
+      "invalid_state — confirm the WHOOP dashboard redirect URI is https://pulsecheck.space/api/auth/whoop/callback"
     );
   }
 
@@ -57,38 +61,57 @@ export async function GET(request: Request) {
     return errorRedirect(origin, `token_exchange: ${result.error}`);
   }
 
+  const expiresIn = result.expires_in ?? 3600;
+  const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
+  const refreshToken = result.refresh_token;
+  if (!refreshToken) {
+    return errorRedirect(origin, "token_exchange: missing refresh token — enable the offline scope");
+  }
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const profile = await fetchWhoopProfile(result.access_token);
+      await upsertWhoopConnection(
+        supabase,
+        user.id,
+        {
+          accessToken: result.access_token,
+          refreshToken,
+          expiresAt,
+        },
+        profile
+      );
+    }
+  }
+
   const res = NextResponse.redirect(new URL("/wearables?whoop=connected", origin));
   const secure = process.env.NODE_ENV === "production";
-  const maxAge = result.expires_in ?? 3600;
 
   res.cookies.set(WHOOP_ACCESS_COOKIE, result.access_token, {
     httpOnly: true,
     sameSite: "lax",
     secure,
     path: "/",
-    maxAge,
+    maxAge: expiresIn,
   });
-
-  if (result.refresh_token) {
-    res.cookies.set(WHOOP_REFRESH_COOKIE, result.refresh_token, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure,
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-    });
-  }
-
-  if (result.expires_in) {
-    const expiresAt = new Date(Date.now() + result.expires_in * 1000).toISOString();
-    res.cookies.set(WHOOP_EXPIRES_COOKIE, expiresAt, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure,
-      path: "/",
-      maxAge: result.expires_in,
-    });
-  }
+  res.cookies.set(WHOOP_REFRESH_COOKIE, refreshToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
+  res.cookies.set(WHOOP_EXPIRES_COOKIE, expiresAt, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure,
+    path: "/",
+    maxAge: expiresIn,
+  });
 
   return res;
 }
